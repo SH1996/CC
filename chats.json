@@ -213,5 +213,186 @@
       "竞品": 14,
       "地铁站": 0
     }
+  },
+  {
+    "id": "e_1778420787209_simg",
+    "date": "2026-05-10T13:47:29.939Z",
+    "address": "四川省绵阳市梓潼县长卿镇四川文化艺术学院梓潼校区国际交流中心",
+    "industry": "文具店",
+    "radius": 3000,
+    "status": "ai_analyzed",
+    "weatherData": {
+      "city": "绵阳市",
+      "adcode": "510700",
+      "province": "四川",
+      "reporttime": "2026-05-10 21:33:28",
+      "casts": [
+        {
+          "date": "2026-05-10",
+          "week": "7",
+          "dayweather": "多云",
+          "nightweather": "阴",
+          "daytemp": "29",
+          "nighttemp": "17",
+          "daywind": "北",
+          "nightwind": "北",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "29.0",
+          "nighttemp_float": "17.0"
+        },
+        {
+          "date": "2026-05-11",
+          "week": "1",
+          "dayweather": "阴",
+          "nightweather": "阴",
+          "daytemp": "29",
+          "nighttemp": "19",
+          "daywind": "北",
+          "nightwind": "北",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "29.0",
+          "nighttemp_float": "19.0"
+        },
+        {
+          "date": "2026-05-12",
+          "week": "2",
+          "dayweather": "多云",
+          "nightweather": "阴",
+          "daytemp": "28",
+          "nighttemp": "18",
+          "daywind": "北",
+          "nightwind": "北",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "28.0",
+          "nighttemp_float": "18.0"
+        },
+        {
+          "date": "2026-05-13",
+          "week": "3",
+          "dayweather": "多云",
+          "nightweather": "多云",
+          "daytemp": "28",
+          "nighttemp": "18",
+          "daywind": "北",
+          "nightwind": "北",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "28.0",
+          "nighttemp_float": "18.0"
+        }
+      ]
+    },
+    "aiAnalysis": {
+      "populationEstimate": "约8-10万",
+      "crowdProfile": "学生、家长、办公人员",
+      "layer1_score": 75,
+      "layer1_analysis": "周边3km范围内拥有75个小区、38所学校、75家公司，人口密度高，学生和家庭客群庞大，但消费水平中等。",
+      "layer2_score": 78,
+      "layer2_analysis": "周边学校众多（38所），尤其是四川文化艺术学院在校学生可形成稳定客流；75家公司提供办公文具需求。有效客群规模大，但需注意竞品分流。",
+      "layer3_score": 70,
+      "layer3_analysis": "公共交通便利（58个公交站），停车位充足（75个），但无地铁。选址在学院内部，可享受学院自带客流，但对校外顾客吸引力有限。",
+      "layer4_score": 65,
+      "layer4_analysis": "半径3km内竞品14家，主要分布在2-2.6km处，但880m处有评分3.5的1号文具。竞争格局分散，但数量较多。",
+      "overall_score": 72,
+      "overall_summary": "该选址位于四川文化艺术学院内，周边学校、小区密集，客群基础好，但文具店竞争较多，需突出差异化（如文创、艺术特色），并利用学院内部流量。",
+      "weatherNote": "天气温和（5月多云/阴，17-29°C），无雨雪极端天气，有利于学生出行和户外客流。文具店受天气影响较小，可结合季节促销。",
+      "risks": [
+        "竞品数量较多，尤其1号文具（880m）评分3.5，可能分流校内客流",
+        "周边消费水平一般，高端文具需求有限",
+        "学院内部管理可能限制营业时间及外来客流"
+      ],
+      "opportunities": [
+        "学院学生基数大，文具及文创需求稳定",
+        "可开发二次元、艺术类特色产品，与漫谷里等差异化竞争",
+        "与学院合作开展活动（如开学季、毕业季）引流",
+        "周边75个小区家庭客群可拓展为课后文具及办公用品需求"
+      ],
+      "checklist": [
+        {
+          "id": "c1",
+          "title": "学院在校学生人数",
+          "aiEstimate": "约8000-12000",
+          "method": "访问学院教务处或官网查询",
+          "reference": "四川文化艺术学院官网",
+          "inputType": "number",
+          "unit": "人"
+        },
+        {
+          "id": "c2",
+          "title": "1号文具店客流量",
+          "aiEstimate": "估算每天100-200人",
+          "method": "分时段实地观察（早、中、晚）",
+          "reference": "1号文具(金牛大道南段店)",
+          "inputType": "number",
+          "unit": "人/天"
+        },
+        {
+          "id": "c3",
+          "title": "目标门店临街面宽度",
+          "aiEstimate": "建议3-5米",
+          "method": "实地测量国际交流中心底商门面",
+          "reference": "国际交流中心底商",
+          "inputType": "number",
+          "unit": "米"
+        },
+        {
+          "id": "c4",
+          "title": "周边主要小区入住率",
+          "aiEstimate": "约70%",
+          "method": "选取东辰一品、南桥小区等2-3个小区，观察亮灯率或询问物业",
+          "reference": "东辰一品、南桥小区等",
+          "inputType": "number",
+          "unit": "%"
+        },
+        {
+          "id": "c5",
+          "title": "主要学校放学时间",
+          "aiEstimate": "下午4:30-5:30",
+          "method": "询问学校或在校门口观察",
+          "reference": "文昌中学、四川文化艺术学院",
+          "inputType": "text",
+          "unit": ""
+        },
+        {
+          "id": "c6",
+          "title": "周边同类商铺租金",
+          "aiEstimate": "约30-50元/㎡/月",
+          "method": "咨询房产中介或房东，对比学院周边商铺",
+          "reference": "周边底商租赁信息",
+          "inputType": "number",
+          "unit": "元/㎡/月"
+        },
+        {
+          "id": "c7",
+          "title": "美团/饿了么外卖配送覆盖范围",
+          "aiEstimate": "3km内可覆盖",
+          "method": "查看外卖平台骑手配送距离设置",
+          "reference": "美团、饿了么APP",
+          "inputType": "text",
+          "unit": ""
+        },
+        {
+          "id": "c8",
+          "title": "竞品文具店商品定价区间",
+          "aiEstimate": "中低端为主，均价3-15元",
+          "method": "实地探店采集典型商品价格（笔记本、笔、书包等）",
+          "reference": "1号文具、前程文具、得力文具等",
+          "inputType": "text",
+          "unit": ""
+        }
+      ]
+    },
+    "fieldData": {},
+    "finalReport": null,
+    "rawDataSummary": {
+      "小区": 75,
+      "写字楼": 7,
+      "学校": 38,
+      "竞品": 14,
+      "地铁站": 0
+    }
   }
 ]
