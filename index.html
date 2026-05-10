@@ -252,7 +252,29 @@
 
         function updateSteps(s){for(var i=1;i<=5;i++){var d=document.getElementById('stepDot'+i),l=document.getElementById('stepLabel'+i),ln=document.getElementById('stepLine'+i);if(!d)continue;d.classList.remove('active','done');if(l)l.classList.remove('active');if(ln)ln.classList.remove('done');if(i<s){d.classList.add('done');if(ln)ln.classList.add('done');}else if(i===s){d.classList.add('active');if(l)l.classList.add('active');}}}
 
-        async function callDS(msgs,temp,mt){temp=temp||0.7;mt=mt||2000;var r=await fetch(DS_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+DS_KEY},body:JSON.stringify({model:DS_MODEL,messages:msgs,temperature:temp,max_tokens:mt,stream:false})});if(!r.ok){var e=await r.text();throw new Error('API '+r.status+': '+e.slice(0,100));}var d=await r.json();return d.choices[0].message.content;}
+        async function callDS(msgs, temp, mt) {
+    temp = temp || 0.7;
+    mt = mt || 2000;
+    // ===== 加这 3 行 =====
+    var controller = new AbortController();
+    var timeout = setTimeout(function() { controller.abort(); }, 90000);  // 90秒超时
+    try {
+        var r = await fetch(DS_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + DS_KEY },
+            body: JSON.stringify({ model: DS_MODEL, messages: msgs, temperature: temp, max_tokens: mt, stream: false }),
+            signal: controller.signal  // ===== 加这个参数 =====
+        });
+        clearTimeout(timeout);  // ===== 加这行 =====
+        if (!r.ok) { var e = await r.text(); throw new Error('API ' + r.status + ': ' + e.slice(0, 100)); }
+        var d = await r.json();
+        return d.choices[0].message.content;
+    } catch (e) {
+        clearTimeout(timeout);  // ===== 加这行 =====
+        if (e.name === 'AbortError') throw new Error('请求超时，数据量较大请稍后重试');
+        throw e;
+    }
+}
 
         async function amapGeocode(addr){var k=getAmapKey();if(!k)throw new Error('NO_KEY');var u='https://restapi.amap.com/v3/geocode/geo?key='+k+'&address='+encodeURIComponent(addr);var r=await fetch(u);var d=await r.json();if(d.status==='1'&&d.geocodes&&d.geocodes.length>0){var l=d.geocodes[0].location.split(',');return{lng:parseFloat(l[0]),lat:parseFloat(l[1]),fmt:d.geocodes[0].formatted_address||addr};}throw new Error('地址解析失败');}
 
@@ -386,7 +408,7 @@
             var d=currentEval.rawData;function c(k){return(d[k]||[]).length;}
             var sum={地址:currentEval.address,行业:currentEval.industry,半径:currentEval.radius+'m',统计:{小区:c('住宅小区'),写字楼:c('写字楼'),公司:c('公司企业'),学校:c('学校'),医院:c('医院'),商场:c('商场'),地铁:c('地铁站'),公交:c('公交站'),停车:c('停车场'),餐饮:c('餐饮'),竞品:c('竞品')},竞品详情:(d['竞品']||[]).slice(0,10).map(function(p){return{名称:p.name,距离:fmtDist(p.distance),地址:(p.address||'').slice(0,40),评分:(p.biz_ext&&p.biz_ext.rating)||'?'};}),小区列表:(d['住宅小区']||[]).slice(0,10).map(function(p){return p.name+' ('+fmtDist(p.distance)+')';})};
             var p='你是选址分析专家。根据数据做四层分析。\n数据：'+JSON.stringify(sum,null,2)+'\n要求：第一层·整体客群/第二层·有效客群/第三层·地形垄断/第四层·竞争对手。生成5-8项实地考察清单。输出纯JSON。';
-            try{var r=await callDS([{role:'system',content:'只输出JSON。'},{role:'user',content:p}],0.4,4000);var m=r.match(/\{[\s\S]*\}/);if(!m)throw new Error('JSON解析失败');var a=JSON.parse(m[0]);currentEval.aiAnalysis=a;currentEval.fieldChecklist=a.checklist||[];currentEval.status='ai_analyzed';currentEval.chatHistory4=step4Chat;currentEval.chatHistory5=step5Chat;saveCurrent();renderStep4();}catch(e){render('<div class="card"><div class="card-title">❌ AI失败</div><p>'+esc(e.message)+'</p><button class="btn btn-primary" id="ra">🔄重试</button></div>');document.getElementById('ra').addEventListener('click',runAI);}
+            try{var r=await callDS([{role:'system',content:'只输出JSON。'},{role:'user',content:p}],0.4,8000);var m=r.match(/\{[\s\S]*\}/);if(!m)throw new Error('JSON解析失败');var a=JSON.parse(m[0]);currentEval.aiAnalysis=a;currentEval.fieldChecklist=a.checklist||[];currentEval.status='ai_analyzed';currentEval.chatHistory4=step4Chat;currentEval.chatHistory5=step5Chat;saveCurrent();renderStep4();}catch(e){render('<div class="card"><div class="card-title">❌ AI失败</div><p>'+esc(e.message)+'</p><button class="btn btn-primary" id="ra">🔄重试</button></div>');document.getElementById('ra').addEventListener('click',runAI);}
         }
 
         // ===== Step 4 =====
