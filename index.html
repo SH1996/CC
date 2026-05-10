@@ -1,0 +1,1915 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>商铺选址分析助手</title>
+    <style>
+        :root {
+            --bg: #f5f6f8;
+            --surface: #ffffff;
+            --border: #e5e7eb;
+            --border-light: #f3f4f6;
+            --primary: #2563eb;
+            --primary-light: #eff6ff;
+            --primary-soft: #dbeafe;
+            --success: #059669;
+            --success-light: #ecfdf5;
+            --warning: #d97706;
+            --warning-light: #fffbeb;
+            --danger: #dc2626;
+            --danger-light: #fef2f2;
+            --text: #111827;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            --shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --chat-user-bg: #eff6ff;
+            --chat-ai-bg: #f9fafb;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+        }
+        .header {
+            background: var(--surface);
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            z-index: 10;
+            box-shadow: var(--shadow);
+        }
+        .header-title {
+            font-size: 16px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .header-actions {
+            display: flex;
+            gap: 4px;
+        }
+        .btn {
+            padding: 7px 12px;
+            border-radius: 18px;
+            border: none;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            background: transparent;
+            color: var(--text-secondary);
+        }
+        .btn:active {
+            transform: scale(0.96);
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+        }
+        .btn-outline {
+            border: 1.5px solid var(--border);
+            background: var(--surface);
+        }
+        .btn-ghost {
+            background: transparent;
+        }
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 11px;
+            border-radius: 14px;
+        }
+        .btn-xs {
+            padding: 3px 8px;
+            font-size: 10px;
+            border-radius: 10px;
+        }
+        .btn-block {
+            width: 100%;
+            justify-content: center;
+            padding: 12px;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        .steps-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            padding: 8px 10px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+        .step-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        .step-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--border-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-muted);
+            transition: all 0.3s;
+        }
+        .step-dot.active {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+            animation: pulse 1.5s infinite;
+        }
+        .step-dot.done {
+            background: var(--success);
+            color: #fff;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+            }
+            50% {
+                box-shadow: 0 4px 16px rgba(37, 99, 235, 0.5);
+            }
+        }
+        .step-line {
+            flex: 1;
+            height: 2px;
+            min-width: 10px;
+            background: var(--border-light);
+            border-radius: 1px;
+            transition: background 0.4s;
+            margin: 0 2px;
+            margin-bottom: 16px;
+        }
+        .step-line.done {
+            background: var(--success);
+        }
+        .step-label {
+            font-size: 8px;
+            color: var(--text-muted);
+            margin-top: 2px;
+            text-align: center;
+            min-width: 38px;
+        }
+        .step-label.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .main-content::-webkit-scrollbar {
+            width: 3px;
+        }
+        .main-content::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 14px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-light);
+            animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .card-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .layer-badge {
+            font-size: 9px;
+            padding: 2px 7px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .badge-layer1 {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+        .badge-layer2 {
+            background: #ecfdf5;
+            color: #059669;
+        }
+        .badge-layer3 {
+            background: #fffbeb;
+            color: #d97706;
+        }
+        .badge-layer4 {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .form-sublabel {
+            font-size: 10px;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 9px 11px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-family: inherit;
+            background: var(--surface);
+            color: var(--text);
+            outline: none;
+        }
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        .form-textarea {
+            min-height: 55px;
+            resize: vertical;
+        }
+        .form-hint {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        .radius-selector {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+        .radius-opt {
+            padding: 8px 14px;
+            border: 1.5px solid var(--border);
+            border-radius: 18px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+            background: var(--surface);
+            color: var(--text-secondary);
+            user-select: none;
+        }
+        .radius-opt.selected {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+        }
+        .radius-opt:active {
+            transform: scale(0.95);
+        }
+        .poi-table-wrap {
+            max-height: 220px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-top: 4px;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+        }
+        .poi-table-wrap::-webkit-scrollbar {
+            width: 3px;
+        }
+        .poi-table-wrap::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+        .poi-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+        }
+        .poi-table th {
+            background: var(--bg);
+            padding: 6px 5px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-secondary);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            border-bottom: 2px solid var(--border);
+        }
+        .poi-table td {
+            padding: 5px;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .poi-dist {
+            font-weight: 600;
+            color: var(--primary);
+            white-space: nowrap;
+        }
+        .poi-dist.near {
+            color: var(--danger);
+        }
+        .poi-dist.mid {
+            color: var(--warning);
+        }
+        .poi-dist.far {
+            color: var(--text-muted);
+        }
+        .section-toggle {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            user-select: none;
+            padding: 5px 0;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .section-toggle .arrow {
+            transition: transform 0.25s;
+            font-size: 8px;
+        }
+        .section-toggle.expanded .arrow {
+            transform: rotate(90deg);
+        }
+        .section-content {
+            display: none;
+        }
+        .section-content.show {
+            display: block;
+        }
+        .ai-block {
+            border-radius: var(--radius-sm);
+            padding: 9px 12px;
+            margin: 6px 0;
+            font-size: 12px;
+            line-height: 1.6;
+            border-left: 3px solid var(--primary);
+            background: linear-gradient(135deg, #f0f9ff, #eff6ff);
+        }
+        .ai-block.warning {
+            border-left-color: var(--warning);
+            background: linear-gradient(135deg, #fffbeb, #fef3c7);
+        }
+        .ai-block.success {
+            border-left-color: var(--success);
+            background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+        }
+        .ai-block.danger {
+            border-left-color: var(--danger);
+            background: linear-gradient(135deg, #fef2f2, #fee2e2);
+        }
+        .checklist-item {
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            padding: 10px;
+            margin-bottom: 8px;
+        }
+        .checklist-item.completed {
+            border-color: var(--success);
+            background: var(--success-light);
+        }
+        .checklist-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+        .checklist-num {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .checklist-num.done-num {
+            background: var(--success);
+        }
+        .checklist-title {
+            font-weight: 700;
+            font-size: 12px;
+        }
+        .method-box {
+            background: var(--primary-light);
+            border-radius: var(--radius-sm);
+            padding: 6px 9px;
+            font-size: 10px;
+            margin: 3px 0;
+        }
+        .ref-box {
+            background: var(--warning-light);
+            border-radius: var(--radius-sm);
+            padding: 6px 9px;
+            font-size: 10px;
+            margin: 3px 0;
+        }
+        .summary-card {
+            background: linear-gradient(135deg, #1e40af, #1d4ed8);
+            color: #fff;
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 10px;
+        }
+        .summary-score {
+            font-size: 36px;
+            font-weight: 800;
+            line-height: 1;
+        }
+        .summary-label {
+            font-size: 10px;
+            opacity: 0.8;
+        }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-top: 10px;
+        }
+        .summary-item {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius-sm);
+            padding: 7px;
+        }
+        .summary-item-label {
+            font-size: 9px;
+            opacity: 0.7;
+        }
+        .summary-item-value {
+            font-size: 14px;
+            font-weight: 700;
+            margin-top: 1px;
+        }
+        .chat-panel {
+            border: 1.5px solid var(--primary-soft);
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        .chat-header-bar {
+            background: var(--primary-light);
+            padding: 9px 12px;
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .chat-header-bar .chat-arrow {
+            transition: transform 0.25s;
+            font-size: 9px;
+        }
+        .chat-header-bar.expanded .chat-arrow {
+            transform: rotate(90deg);
+        }
+        .chat-body {
+            display: none;
+            flex-direction: column;
+            max-height: 350px;
+        }
+        .chat-body.show {
+            display: flex;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 200px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .chat-messages::-webkit-scrollbar {
+            width: 2px;
+        }
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 8px;
+        }
+        .chat-msg {
+            max-width: 88%;
+            padding: 8px 10px;
+            border-radius: 14px;
+            font-size: 11px;
+            line-height: 1.5;
+            animation: slideUp 0.2s ease;
+        }
+        .chat-msg.user {
+            align-self: flex-end;
+            background: var(--chat-user-bg);
+            border-bottom-right-radius: 3px;
+        }
+        .chat-msg.ai {
+            align-self: flex-start;
+            background: var(--chat-ai-bg);
+            border: 1px solid var(--border-light);
+            border-bottom-left-radius: 3px;
+        }
+        .chat-input-row {
+            display: flex;
+            gap: 5px;
+            padding: 7px 8px;
+            border-top: 1px solid var(--border-light);
+            background: var(--surface);
+        }
+        .chat-input-row input {
+            flex: 1;
+            padding: 7px 10px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            font-size: 11px;
+            font-family: inherit;
+            outline: none;
+        }
+        .chat-input-row input:focus {
+            border-color: var(--primary);
+        }
+        .chat-send-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: none;
+            background: var(--primary);
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .chat-send-btn:active {
+            transform: scale(0.9);
+        }
+        .chat-typing {
+            display: flex;
+            gap: 3px;
+            padding: 6px;
+        }
+        .chat-typing span {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            animation: bounce 1.2s infinite;
+        }
+        .chat-typing span:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+        .chat-typing span:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+        @keyframes bounce {
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+                opacity: 0.4;
+            }
+            30% {
+                transform: translateY(-4px);
+                opacity: 1;
+            }
+        }
+        .history-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 10px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .history-item:active {
+            background: var(--primary-light);
+        }
+        .toast {
+            position: fixed;
+            top: 65px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2937;
+            color: #fff;
+            padding: 9px 18px;
+            border-radius: 18px;
+            font-size: 12px;
+            z-index: 200;
+            opacity: 0;
+            transition: all 0.3s;
+            pointer-events: none;
+            box-shadow: var(--shadow-md);
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(3px);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 30px 16px;
+            color: var(--text-muted);
+        }
+        .empty-icon {
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+        .spinner-wrap {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 14px;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ===== 查询面板 ===== */
+        .query-panel {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            max-width: 420px;
+            height: 100%;
+            height: 100dvh;
+            background: var(--surface);
+            z-index: 150;
+            transition: right 0.35s;
+            box-shadow: -4px 0 30px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            border-left: 2px solid var(--border);
+        }
+        .query-panel.open {
+            right: 0;
+        }
+        .query-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(2px);
+            z-index: 149;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s;
+        }
+        .query-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .query-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .query-close-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: none;
+            background: var(--bg);
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+        .query-close-btn:active {
+            background: var(--border);
+            transform: scale(0.9);
+        }
+        .query-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .query-item {
+            background: var(--bg);
+            border: 1px solid var(--border-light);
+            border-radius: 14px;
+            padding: 12px;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+        .query-item .meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .query-item .content {
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 80px;
+            overflow-y: auto;
+        }
+        .password-wrap {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+        }
+        .password-wrap input {
+            padding: 12px 16px;
+            border-radius: 24px;
+            border: 2px solid var(--border);
+            font-size: 15px;
+            width: 100%;
+            outline: none;
+            text-align: center;
+        }
+        .password-wrap button {
+            background: var(--primary);
+            border: none;
+            color: white;
+            padding: 10px 28px;
+            border-radius: 24px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .query-del-btn {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .query-del-btn:hover {
+            background: var(--danger-light);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+        .query-del-btn:active {
+            transform: scale(0.9);
+        }
+
+        @media(max-width:380px) {
+            .header-title {
+                font-size: 14px;
+            }
+            .card {
+                padding: 10px;
+            }
+            .summary-score {
+                font-size: 28px;
+            }
+            .query-panel {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="toast" id="toast"></div>
+
+    <!-- 查询面板遮罩 -->
+    <div class="query-overlay" id="queryOverlay"></div>
+    <!-- 查询面板 -->
+    <div class="query-panel" id="queryPanel">
+        <div class="query-header">
+            <span>📋 云端记录查询</span>
+            <button class="query-close-btn" id="queryCloseBtn">✕</button>
+        </div>
+        <div style="display:flex;gap:8px;padding:8px 16px;border-bottom:1px solid var(--border-light);">
+            <button class="btn btn-ghost btn-xs" id="btnDeleteAllCloud">🗑 全部删除</button>
+        </div>
+        <div id="queryContent" style="flex:1;display:flex;flex-direction:column;overflow:hidden;"></div>
+    </div>
+
+    <div class="header">
+        <div class="header-title">📍 商铺选址分析</div>
+        <div class="header-actions">
+            <button class="btn btn-ghost btn-sm" id="btnHistory">📂 历史</button>
+            <button class="btn btn-ghost btn-sm" id="btnCloud">🔍 云端</button>
+            <button class="btn btn-ghost btn-sm" id="btnNew">🆕 新建</button>
+        </div>
+    </div>
+    <div class="steps-bar" id="stepsBar">
+        <div class="step-group"><div class="step-dot" id="stepDot1">1</div><div class="step-label" id="stepLabel1">输入</div></div>
+        <div class="step-line" id="stepLine1"></div>
+        <div class="step-group"><div class="step-dot" id="stepDot2">2</div><div class="step-label" id="stepLabel2">采集</div></div>
+        <div class="step-line" id="stepLine2"></div>
+        <div class="step-group"><div class="step-dot" id="stepDot3">3</div><div class="step-label" id="stepLabel3">初步报告</div></div>
+        <div class="step-line" id="stepLine3"></div>
+        <div class="step-group"><div class="step-dot" id="stepDot4">4</div><div class="step-label" id="stepLabel4">实地清单</div></div>
+        <div class="step-line" id="stepLine4"></div>
+        <div class="step-group"><div class="step-dot" id="stepDot5">5</div><div class="step-label" id="stepLabel5">最终报告</div></div>
+    </div>
+    <div class="main-content" id="mainContent"></div>
+
+    <script>
+        (function() {
+            // ===== API 密钥 =====
+            var _k1 = 'sk-079eb73';
+            var _k2 = 'ca6b944f6a3ee';
+            var _k3 = '479c2cacff51';
+            var DS_KEY = _k1 + _k2 + _k3;
+            var DS_URL = 'https://api.deepseek.com/v1/chat/completions';
+            var DS_MODEL = 'deepseek-v4-flash';
+
+            // ===== GitHub Token（三段拼接）=====
+            var _g1 = 'ghp_qJ5BUL29';
+            var _g2 = 'T93vq3MQSAQ';
+            var _g3 = 'NzQ2Snq3TMr3GGmuB';
+            var GH_TOKEN = _g1 + _g2 + _g3;
+            var GH_OWNER = 'SH1996';
+            var GH_REPO = 'CC';
+            var GH_FILE = 'chats.json';
+            var GH_API = 'https://api.github.com/repos/' + GH_OWNER + '/' + GH_REPO + '/contents/' + GH_FILE;
+            var QUERY_PASSWORD = 'jinxi2026';
+
+            function getAmapKey() { return localStorage.getItem('amap_site_k_v7') || ''; }
+
+            function setAmapKey(k) { localStorage.setItem('amap_site_k_v7', k); }
+
+            var currentStep = 1;
+            var currentEval = createEmpty();
+            var step4Chat = [];
+            var step5Chat = [];
+            var selectedRadius = 3000;
+            var toastTimer = null;
+            // 标记云端存储是否正在进行中
+            var cloudSaving = false;
+
+            function createEmpty() {
+                return {
+                    id: '',
+                    address: '',
+                    industry: '',
+                    radius: 3000,
+                    coordinates: null,
+                    rawData: {},
+                    aiAnalysis: {},
+                    fieldChecklist: [],
+                    fieldData: {},
+                    finalReport: null,
+                    chatHistory4: [],
+                    chatHistory5: [],
+                    status: 'draft',
+                    createdAt: '',
+                    updatedAt: ''
+                };
+            }
+
+            var $m = document.getElementById('mainContent');
+            var $t = document.getElementById('toast');
+            var $queryPanel = document.getElementById('queryPanel');
+            var $queryOverlay = document.getElementById('queryOverlay');
+
+            document.getElementById('btnHistory').addEventListener('click', showHistory);
+            document.getElementById('btnCloud').addEventListener('click', openQueryPanel);
+            document.getElementById('btnNew').addEventListener('click', startNew);
+
+            // 查询面板关闭按钮 - 使用 addEventListener 绑定
+            document.getElementById('queryCloseBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                closeQueryPanel();
+            });
+            // 遮罩层点击关闭
+            $queryOverlay.addEventListener('click', function(e) {
+                e.preventDefault();
+                closeQueryPanel();
+            });
+            // 全部删除按钮
+            document.getElementById('btnDeleteAllCloud').addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                deleteAllCloudRecords();
+            });
+
+            function toast(m) {
+                clearTimeout(toastTimer);
+                $t.textContent = m;
+                $t.classList.add('show');
+                toastTimer = setTimeout(function() { $t.classList.remove('show'); }, 2500);
+            }
+
+            function sleep(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
+
+            function genId() { return 'e_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6); }
+
+            function esc(s) { if (!s) return ''; var d = document.createElement('div');
+                d.textContent = s; return d.innerHTML; }
+
+            function updateSteps(s) {
+                currentStep = s;
+                for (var i = 1; i <= 5; i++) {
+                    var d = document.getElementById('stepDot' + i);
+                    var l = document.getElementById('stepLabel' + i);
+                    var ln = document.getElementById('stepLine' + i);
+                    if (!d) continue;
+                    d.classList.remove('active', 'done');
+                    if (l) l.classList.remove('active');
+                    if (ln) ln.classList.remove('done');
+                    if (i < s) { d.classList.add('done'); if (ln) ln.classList.add('done'); } else if (i ===
+                        s) { d.classList.add('active'); if (l) l.classList.add('active'); }
+                }
+            }
+
+            async function callDS(msgs, temp, mt) {
+                temp = temp || 0.7;
+                mt = mt || 2000;
+                var r = await fetch(DS_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + DS_KEY },
+                    body: JSON.stringify({ model: DS_MODEL, messages: msgs, temperature: temp, max_tokens: mt,
+                        stream: false })
+                });
+                if (!r.ok) { var e = await r.text(); throw new Error('API ' + r.status + ': ' + e.slice(0,
+                    100)); }
+                var d = await r.json();
+                return d.choices[0].message.content;
+            }
+
+            async function amapGeocode(addr) {
+                var k = getAmapKey(); if (!k) throw new Error('NO_KEY');
+                var u = 'https://restapi.amap.com/v3/geocode/geo?key=' + k + '&address=' + encodeURIComponent(
+                addr);
+                var r = await fetch(u);
+                var d = await r.json();
+                if (d.status === '1' && d.geocodes && d.geocodes.length > 0) {
+                    var l = d.geocodes[0].location.split(',');
+                    return { lng: parseFloat(l[0]), lat: parseFloat(l[1]), fmt: d.geocodes[0].formatted_address ||
+                            addr };
+                }
+                throw new Error('地址解析失败');
+            }
+
+            async function amapPOISearch(loc, kw, rad) {
+                rad = rad || 3000;
+                var k = getAmapKey(); if (!k) throw new Error('NO_KEY');
+                var all = [];
+                for (var p = 1; p <= 3; p++) {
+                    var u = 'https://restapi.amap.com/v3/place/around?key=' + k + '&location=' + loc +
+                        '&keywords=' + encodeURIComponent(kw) + '&radius=' + rad + '&offset=25&page=' + p;
+                    var r = await fetch(u);
+                    var d = await r.json();
+                    if (d.status === '1' && d.pois && d.pois.length > 0) {
+                        all = all.concat(d.pois);
+                        if (d.pois.length < 25) break;
+                    } else break;
+                    await sleep(150);
+                }
+                return all;
+            }
+
+            // 学校专项搜索
+            async function searchSchools(loc, rad) {
+                var allSchools = [];
+                var seen = {};
+                var keywords = ['学校', '大学', '学院', '中学', '小学', '幼儿园', '职业学校', '技术学院', '培训学校', '教育'];
+                for (var i = 0; i < keywords.length; i++) {
+                    try {
+                        var results = await amapPOISearch(loc, keywords[i], rad);
+                        for (var j = 0; j < results.length; j++) {
+                            var key = results[j].name + '|' + (results[j].address || '');
+                            if (!seen[key]) { seen[key] = true;
+                                allSchools.push(results[j]); }
+                        }
+                    } catch (e) {}
+                    await sleep(100);
+                }
+                allSchools.sort(function(a, b) { return (parseInt(a.distance) || 99999) - (parseInt(b.distance) ||
+                        99999); });
+                return allSchools;
+            }
+
+            function getLocalEvals() { try { return JSON.parse(localStorage.getItem('site_evals_v7') || '[]'); } catch (
+            e) { return []; } }
+
+            function saveLocalEvals(evals) { if (evals.length > 100) evals = evals.slice(-100);
+                localStorage.setItem('site_evals_v7', JSON.stringify(evals)); }
+
+            async function saveCurrent() {
+                currentEval.updatedAt = new Date().toISOString();
+                currentEval.chatHistory4 = JSON.parse(JSON.stringify(step4Chat));
+                currentEval.chatHistory5 = JSON.parse(JSON.stringify(step5Chat));
+                var evals = getLocalEvals();
+                var idx = -1;
+                for (var i = 0; i < evals.length; i++) { if (evals[i].id === currentEval.id) { idx = i; break; } }
+                if (idx >= 0) evals[idx] = JSON.parse(JSON.stringify(currentEval));
+                else evals.push(JSON.parse(JSON.stringify(currentEval)));
+                saveLocalEvals(evals);
+            }
+
+            function render(h) { $m.innerHTML = h;
+                $m.scrollTop = 0; }
+
+            function fmtDist(m) { if (!m && m !== 0) return '?';
+                m = parseInt(m); return m < 1000 ? m + 'm' : (m / 1000).toFixed(1) + 'km'; }
+
+            function distClass(m) { if (!m && m !== 0) return ''; if (parseInt(m) <= 500) return 'near'; if (parseInt(m) <=
+                    1500) return 'mid'; return 'far'; }
+
+            function renderPOITable(data, mx) {
+                mx = mx || 30;
+                if (!data || !data.length) return '<div style="color:var(--text-muted);font-size:10px;padding:6px;">未搜索到</div>';
+                var s = data.slice(0, mx);
+                var h =
+                    '<div class="poi-table-wrap"><table class="poi-table"><thead><tr><th>#</th><th>名称</th><th>距离</th><th>地址</th></tr></thead><tbody>';
+                for (var i = 0; i < s.length; i++) {
+                    var p = s[i];
+                    h += '<tr><td>' + (i + 1) + '</td><td><strong>' + esc(p.name || '?') +
+                        '</strong></td><td class="poi-dist ' + distClass(p.distance) + '">' + fmtDist(p.distance) +
+                        '</td><td style="font-size:9px;color:var(--text-muted);">' + esc((p.address || '').slice(0,
+                            35)) + '</td></tr>';
+                }
+                if (data.length > mx)
+                    h += '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:6px;">共' + data
+                    .length + '条，仅显示前' + mx + '条</td></tr>';
+                h += '</tbody></table></div>';
+                return h;
+            }
+
+            function renderCollapsible(title, content, defOpen) {
+                var id = 'sec_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+                return '<div class="section-toggle' + (defOpen ? ' expanded' : '') +
+                    '" data-sec-id="' + id + '"><span class="arrow">▶</span> ' + esc(title) +
+                    '</div><div class="section-content' + (defOpen ? ' show' : '') + '" id="' + id + '">' + content +
+                    '</div>';
+            }
+
+            // 使用事件委托处理折叠
+            $m.addEventListener('click', function(e) {
+                var toggle = e.target.closest('.section-toggle');
+                if (!toggle) return;
+                var secId = toggle.getAttribute('data-sec-id');
+                var content = document.getElementById(secId);
+                if (!content) return;
+                toggle.classList.toggle('expanded');
+                content.classList.toggle('show');
+            });
+
+            // ===== GitHub 云端存储 =====
+            async function getChatJson() {
+                try {
+                    var res = await fetch(GH_API, {
+                        headers: { 'Authorization': 'token ' + GH_TOKEN,
+                            'Accept': 'application/vnd.github.v3+json' }
+                    });
+                    if (res.status === 404) return [];
+                    if (!res.ok) { console.error('读取云端失败, 状态码:', res.status); return []; }
+                    var data = await res.json();
+                    if (!data.content) return [];
+                    var decoded = atob(data.content);
+                    var text = decodeURIComponent(escape(decoded));
+                    return JSON.parse(text);
+                } catch (e) { console.error('读取云端异常:', e); return []; }
+            }
+
+            async function saveChatJson(records) {
+                try {
+                    var jsonStr = JSON.stringify(records, null, 2);
+                    var utf8Bytes = unescape(encodeURIComponent(jsonStr));
+                    var content = btoa(utf8Bytes);
+                    var sha = null;
+                    // 先尝试获取现有文件的 sha
+                    try {
+                        var check = await fetch(GH_API, {
+                            headers: { 'Authorization': 'token ' + GH_TOKEN,
+                                'Accept': 'application/vnd.github.v3+json' }
+                        });
+                        if (check.ok) { var info = await check.json();
+                            sha = info.sha; }
+                    } catch (e) {}
+                    var body = { message: 'update site evaluations', content: content, branch: 'main' };
+                    if (sha) body.sha = sha;
+                    var res = await fetch(GH_API, {
+                        method: 'PUT',
+                        headers: {
+                            'Authorization': 'token ' + GH_TOKEN,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/vnd.github.v3+json'
+                        },
+                        body: JSON.stringify(body)
+                    });
+                    if (!res.ok) {
+                        var errText = await res.text();
+                        console.error('云端存储失败, 状态码:', res.status, '详情:', errText);
+                        return false;
+                    }
+                    console.log('✅ 已同步到 GitHub');
+                    return true;
+                } catch (e) { console.error('云端存储异常:', e); return false; }
+            }
+
+            async function saveCurrentToCloud() {
+                if (cloudSaving) return;
+                cloudSaving = true;
+                try {
+                    var records = await getChatJson();
+                    var record = {
+                        id: currentEval.id,
+                        date: new Date().toISOString(),
+                        address: currentEval.address,
+                        industry: currentEval.industry,
+                        radius: currentEval.radius,
+                        status: currentEval.status,
+                        aiAnalysis: currentEval.aiAnalysis,
+                        fieldData: currentEval.fieldData,
+                        finalReport: currentEval.finalReport,
+                        rawDataSummary: {
+                            小区: (currentEval.rawData['住宅小区'] || []).length,
+                            写字楼: (currentEval.rawData['写字楼'] || []).length,
+                            学校: (currentEval.rawData['学校'] || []).length,
+                            竞品: (currentEval.rawData['竞品'] || []).length,
+                            地铁站: (currentEval.rawData['地铁站'] || []).length,
+                        }
+                    };
+                    var idx = -1;
+                    for (var i = 0; i < records.length; i++) { if (records[i].id === currentEval.id) { idx = i; break; } }
+                    if (idx >= 0) { records[idx] = record; } else { records.push(record); }
+                    if (records.length > 200) records.splice(0, records.length - 200);
+                    await saveChatJson(records);
+                } catch (e) { console.error('云端存储失败:', e); } finally { cloudSaving = false; }
+            }
+
+            // ===== 查询面板 =====
+            function openQueryPanel() {
+                var pw = prompt('🔐 请输入查询密码：');
+                if (pw !== QUERY_PASSWORD) { if (pw !== null) toast('❌ 密码错误'); return; }
+                $queryPanel.classList.add('open');
+                $queryOverlay.classList.add('active');
+                loadCloudRecords();
+            }
+
+            function closeQueryPanel() {
+                $queryPanel.classList.remove('open');
+                $queryOverlay.classList.remove('active');
+            }
+
+            async function loadCloudRecords() {
+                var container = document.getElementById('queryContent');
+                container.innerHTML =
+                    '<div style="padding:20px;text-align:center;color:var(--text-muted);">加载中...</div>';
+                try {
+                    var records = await getChatJson();
+                    if (!records.length) {
+                        container.innerHTML =
+                            '<div style="padding:20px;text-align:center;color:var(--text-muted);">暂无云端记录</div>';
+                        return;
+                    }
+                    var html = records.slice().reverse().map(function(r, i) {
+                        var realIndex = records.length - 1 - i;
+                        var date = r.date || '';
+                        var address = (r.address || '').slice(0, 60);
+                        var industry = r.industry || '';
+                        var score = r.finalReport ? (r.finalReport.finalScore || '--') : '--';
+                        var verdict = r.finalReport ? (r.finalReport.verdict || '') : '';
+                        var statusText = r.status === 'final' ? '✅' : '⏳';
+                        return '<div class="query-item" data-idx="' + realIndex + '">' +
+                            '<div class="meta">' +
+                            '<span>' + esc(date ? new Date(date).toLocaleString('zh-CN') : '') + '</span>' +
+                            '<span style="display:flex;align-items:center;gap:8px;">' +
+                            '<span>' + esc(industry) + ' · ' + statusText + ' · ' + score + '分</span>' +
+                            '<button class="query-del-btn" data-del-idx="' + realIndex +
+                            '">🗑</button>' +
+                            '</span>' +
+                            '</div>' +
+                            '<div class="content"><strong>📍</strong> ' + esc(address) + '</div>' +
+                            (verdict ? '<div class="content" style="margin-top:4px;"><strong>结论:</strong> ' + esc(
+                                verdict) + '</div>' : '') +
+                            '</div>';
+                    }).join('');
+                    container.innerHTML = '<div class="query-list">' + html + '</div>';
+
+                    // 绑定删除按钮事件
+                    var delBtns = container.querySelectorAll('.query-del-btn');
+                    for (var d = 0; d < delBtns.length; d++) {
+                        delBtns[d].addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            var idx = parseInt(this.getAttribute('data-del-idx'));
+                            deleteCloudRecord(idx);
+                        });
+                    }
+                } catch (e) {
+                    container.innerHTML =
+                        '<div style="padding:20px;text-align:center;color:var(--danger);">加载失败: ' + esc(e
+                            .message) + '</div>';
+                }
+            }
+
+            async function deleteCloudRecord(index) {
+                if (!confirm('确定要删除这条云端记录吗？')) return;
+                try {
+                    var records = await getChatJson();
+                    if (index >= 0 && index < records.length) {
+                        records.splice(index, 1);
+                        await saveChatJson(records);
+                        toast('✅ 已删除');
+                        loadCloudRecords();
+                    }
+                } catch (e) { toast('❌ 删除失败'); }
+            }
+
+            async function deleteAllCloudRecords() {
+                if (!confirm('⚠️ 确定要删除所有云端记录吗？此操作不可撤销！')) return;
+                try {
+                    await saveChatJson([]);
+                    toast('✅ 已全部删除');
+                    loadCloudRecords();
+                } catch (e) { toast('❌ 删除失败'); }
+            }
+
+            // ===== AI 聊天面板 =====
+            function renderChatPanel(chatId, contextType) {
+                var msgsArr = (contextType === 'step4') ? step4Chat : step5Chat;
+                var h = '<div class="chat-panel">';
+                h += '<div class="chat-header-bar" data-chat-id="' + chatId +
+                    '">💬 AI 问答 <span style="font-size:9px;opacity:0.7;">（针对' + (contextType === 'step4' ?
+                        '初步报告' : '最终报告') + '提问）</span><span class="chat-arrow">▶</span></div>';
+                h += '<div class="chat-body" id="' + chatId + '">';
+                h += '<div class="chat-messages" id="' + chatId + '_msgs">';
+                for (var i = 0; i < msgsArr.length; i++) {
+                    h += '<div class="chat-msg ' + msgsArr[i].role + '">' + esc(msgsArr[i].content).replace(/\n/g,
+                        '<br>') + '</div>';
+                }
+                if (!msgsArr.length)
+                    h += '<div style="text-align:center;color:var(--text-muted);font-size:10px;padding:12px;">💡 对这份报告有任何疑问，直接问 AI</div>';
+                h += '</div>';
+                h += '<div class="chat-input-row"><input type="text" id="' + chatId +
+                    '_inp" placeholder="问AI关于这份报告的问题..."><button class="chat-send-btn" id="' + chatId +
+                    '_btn">➤</button></div>';
+                h += '</div></div>';
+                return h;
+            }
+
+            // 聊天面板的事件通过事件委托处理
+            $m.addEventListener('click', function(e) {
+                // 聊天头部折叠
+                var chatHeader = e.target.closest('.chat-header-bar');
+                if (chatHeader) {
+                    var chatId = chatHeader.getAttribute('data-chat-id');
+                    var body = document.getElementById(chatId);
+                    if (!body) return;
+                    chatHeader.classList.toggle('expanded');
+                    body.classList.toggle('show');
+                    if (body.classList.contains('show')) {
+                        var msgs = document.getElementById(chatId + '_msgs');
+                        if (msgs) msgs.scrollTop = msgs.scrollHeight;
+                    }
+                    return;
+                }
+                // 聊天发送按钮
+                var sendBtn = e.target.closest('.chat-send-btn');
+                if (sendBtn) {
+                    var btnId = sendBtn.id;
+                    // btnId 格式: chat4_btn 或 chat5_btn
+                    if (btnId === 'chat4_btn') { sendChatMsg('chat4', 'step4'); } else if (btnId ===
+                        'chat5_btn') { sendChatMsg('chat5', 'step5'); }
+                    return;
+                }
+            });
+
+            // 聊天输入框回车发送
+            $m.addEventListener('keydown', function(e) {
+                if (e.key !== 'Enter') return;
+                var inp = e.target;
+                if (inp.id === 'chat4_inp') { e.preventDefault();
+                    sendChatMsg('chat4', 'step4'); } else if (inp.id === 'chat5_inp') { e.preventDefault();
+                    sendChatMsg('chat5', 'step5'); }
+            });
+
+            async function sendChatMsg(cid, ctx) {
+                var inp = document.getElementById(cid + '_inp');
+                var btn = document.getElementById(cid + '_btn');
+                var msgs = document.getElementById(cid + '_msgs');
+                if (!inp || !btn || !msgs) return;
+                var txt = inp.value.trim(); if (!txt) return;
+                var msgsArr = (ctx === 'step4') ? step4Chat : step5Chat;
+                msgsArr.push({ role: 'user', content: txt });
+                inp.value = '';
+                btn.disabled = true;
+                renderChatMsgs(cid, ctx);
+                var ctxStr = '';
+                if (ctx === 'step4') {
+                    ctxStr = '这是商铺选址的初步AI分析报告（半结论）。\n地址：' + currentEval.address + '\n行业：' +
+                        currentEval.industry + '\n半径：' + currentEval.radius + 'm\n分析数据：' + JSON.stringify(
+                            currentEval.aiAnalysis, null, 2);
+                } else {
+                    ctxStr = '这是商铺选址的最终评估报告（全结论，含实地数据）。\n地址：' + currentEval.address + '\n行业：' +
+                        currentEval.industry + '\n半径：' + currentEval.radius + 'm\n最终报告：' + JSON.stringify(
+                            currentEval.finalReport, null, 2) + '\n实地数据：' + JSON.stringify(currentEval.fieldData,
+                            null, 2);
+                }
+                var lid = 'ld_' + Date.now();
+                msgs.insertAdjacentHTML('beforeend', '<div class="chat-msg ai" id="' + lid +
+                    '"><div class="chat-typing"><span></span><span></span><span></span></div></div>');
+                msgs.scrollTop = msgs.scrollHeight;
+                try {
+                    var ms = [{ role: 'system', content: '你是选址分析专家。根据以下报告内容回答用户问题。简洁实用，3-8句话。' }, { role: 'user',
+                        content: ctxStr }];
+                    var recent = msgsArr.slice(-6);
+                    for (var r = 0; r < recent.length; r++) ms.push({ role: recent[r].role, content: recent[r]
+                    .content });
+                    var reply = await callDS(ms, 0.7, 1500);
+                    var le = document.getElementById(lid); if (le) le.remove();
+                    msgsArr.push({ role: 'assistant', content: reply });
+                    if (ctx === 'step4') { step4Chat = msgsArr;
+                        currentEval.chatHistory4 = JSON.parse(JSON.stringify(step4Chat)); } else { step5Chat =
+                            msgsArr;
+                        currentEval.chatHistory5 = JSON.parse(JSON.stringify(step5Chat)); }
+                    saveCurrent();
+                    renderChatMsgs(cid, ctx);
+                } catch (e) {
+                    var le2 = document.getElementById(lid); if (le2) le2.remove();
+                    msgsArr.push({ role: 'assistant', content: '请求失败：' + e.message });
+                    renderChatMsgs(cid, ctx);
+                }
+                btn.disabled = false;
+                inp.focus();
+            }
+
+            function renderChatMsgs(cid, ctx) {
+                var msgs = document.getElementById(cid + '_msgs'); if (!msgs) return;
+                var arr = (ctx === 'step4') ? step4Chat : step5Chat;
+                var h = '';
+                for (var i = 0; i < arr.length; i++)
+                    h += '<div class="chat-msg ' + arr[i].role + '">' + esc(arr[i].content).replace(/\n/g, '<br>') +
+                    '</div>';
+                if (!arr.length)
+                    h += '<div style="text-align:center;color:var(--text-muted);font-size:10px;padding:12px;">💡 对这份报告有任何疑问，直接问 AI</div>';
+                msgs.innerHTML = h;
+                msgs.scrollTop = msgs.scrollHeight;
+            }
+
+            // ===== Step 1: 输入 =====
+            function renderStep1() {
+                updateSteps(1);
+                var hasAmap = !!getAmapKey();
+                var addr = esc(currentEval.address || '');
+                var ind = esc(currentEval.industry || '');
+                var rad = currentEval.radius || 3000;
+                var h = '<div class="card"><div class="card-title">🎯 输入选址信息</div>';
+                h +=
+                '<div class="form-group"><label class="form-label">📍 意向地址 <span class="form-sublabel">（越详细越好）</span></label>';
+                h +=
+                    '<input type="text" class="form-input" id="evalAddress" placeholder="例如：成都市锦江区春熙路银石广场一楼临街铺" value="' +
+                    addr + '"></div>';
+                h += '<div class="form-group"><label class="form-label">🏪 经营行业</label>';
+                h += '<input type="text" class="form-input" id="evalIndustry" placeholder="例如：奶茶店、火锅店" value="' + ind +
+                    '"></div>';
+                h += '<div class="form-group"><label class="form-label">📏 搜索半径</label>';
+                h += '<div class="radius-selector" id="radiusSelector">';
+                var opts = [{ v: 500, l: '500m' }, { v: 1000, l: '1km' }, { v: 2000, l: '2km' }, { v: 3000,
+                    l: '3km' }, { v: 5000, l: '5km' }];
+                for (var o = 0; o < opts.length; o++) {
+                    h += '<div class="radius-opt' + (rad === opts[o].v ? ' selected' : '') + '" data-r="' + opts[o]
+                        .v + '">' + opts[o].l + '</div>';
+                }
+                h += '</div><div class="form-hint">💡 搜索半径越大，数据越多，耗时也越长</div></div>';
+                if (!hasAmap) {
+                    h +=
+                    '<div class="form-group"><label class="form-label">🗺️ 高德 API Key <span class="form-sublabel">（首次填写后自动保存）</span></label>';
+                    h += '<input type="text" class="form-input" id="amapKeyInput" placeholder="粘贴高德Web服务Key">';
+                    h +=
+                        '<div class="form-hint">💡 <a href="https://lbs.amap.com" target="_blank" style="color:var(--primary);">点击申请</a></div></div>';
+                } else {
+                    h +=
+                        '<div style="font-size:10px;color:var(--success);margin-bottom:8px;">✅ 高德Key已配置 <button class="btn btn-ghost btn-xs" id="btnResetAmap">🔄换</button></div>';
+                }
+                h += '<button class="btn btn-primary btn-block" id="btnStart">🚀 开始采集数据</button></div>';
+                h +=
+                '<div class="card"><div class="card-title">📋 流程</div><div style="font-size:11px;color:var(--text-secondary);line-height:1.7;">① 输入地址+半径 → 采集数据<br>② AI 初步分析 → 实地考察清单<br>③ 带着清单去现场填写<br>④ 提交实地数据 → 最终报告<br>⑤ 每步都有AI问答，随时提问<br>⑥ 第四步/第五步自动同步云端</div></div>';
+                render(h);
+
+                // 半径选择事件
+                var radiusOpts = document.querySelectorAll('#radiusSelector .radius-opt');
+                for (var ro = 0; ro < radiusOpts.length; ro++) {
+                    radiusOpts[ro].addEventListener('click', function() {
+                        var all = document.querySelectorAll('#radiusSelector .radius-opt');
+                        for (var a = 0; a < all.length; a++) all[a].classList.remove('selected');
+                        this.classList.add('selected');
+                        selectedRadius = parseInt(this.getAttribute('data-r'));
+                    });
+                }
+                document.getElementById('btnStart').addEventListener('click', startCollection);
+                if (hasAmap) {
+                    var rb = document.getElementById('btnResetAmap');
+                    if (rb) rb.addEventListener('click', function() { localStorage.removeItem(
+                            'amap_site_k_v7');
+                        renderStep1(); });
+                }
+            }
+
+            // ===== Step 2-3: 采集+AI分析 =====
+            async function startCollection() {
+                var addr = (document.getElementById('evalAddress') || {}).value || '';
+                var ind = (document.getElementById('evalIndustry') || {}).value || '';
+                if (!addr) { toast('请输入地址'); return; }
+                if (!ind) { toast('请输入行业'); return; }
+                var ak = document.getElementById('amapKeyInput');
+                if (ak && ak.value.trim()) setAmapKey(ak.value.trim());
+                if (!getAmapKey()) { toast('请填写高德Key'); return; }
+                currentEval = createEmpty();
+                currentEval.id = genId();
+                currentEval.address = addr;
+                currentEval.industry = ind;
+                currentEval.radius = selectedRadius;
+                currentEval.status = 'data_collecting';
+                currentEval.createdAt = new Date().toISOString();
+                step4Chat = [];
+                step5Chat = [];
+                updateSteps(2);
+                render('<div class="card"><div class="card-title">🔍 正在采集数据（半径' + selectedRadius +
+                    'm）...</div><div class="spinner-wrap"><div class="spinner"></div><span id="st">解析地址...</span></div><div id="lg" style="font-size:10px;color:var(--text-muted);margin-top:6px;"></div></div>'
+                    );
+                var $lg = document.getElementById('lg'),
+                    $st = document.getElementById('st');
+
+                function lg(m) { if ($lg) $lg.innerHTML += '<div>' + m + '</div>'; if ($st) $st.textContent = m; }
+                try {
+                    lg('📍 解析坐标...');
+                    var coords = await amapGeocode(addr);
+                    currentEval.coordinates = [coords.lng, coords.lat];
+                    currentEval.rawData.fmtAddr = coords.fmt;
+                    var loc = coords.lng + ',' + coords.lat;
+                    var rad = selectedRadius;
+                    var tasks = [
+                        { k: '住宅小区', l: '🏠 小区', kw: '住宅小区', useDefault: true },
+                        { k: '写字楼', l: '🏢 写字楼', kw: '写字楼|产业园|商务中心', useDefault: true },
+                        { k: '公司企业', l: '🏭 公司', kw: '公司|企业', useDefault: true },
+                        { k: '学校', l: '🏫 学校（专项搜索）', kw: '', useDefault: false },
+                        { k: '医院', l: '🏥 医院', kw: '综合医院|诊所', useDefault: true },
+                        { k: '商场', l: '🛍️ 商场', kw: '购物中心|百货|商场', useDefault: true },
+                        { k: '地铁站', l: '🚇 地铁', kw: '地铁站', useDefault: true },
+                        { k: '公交站', l: '🚌 公交', kw: '公交站', useDefault: true },
+                        { k: '停车场', l: '🅿️ 停车', kw: '停车场', useDefault: true },
+                        { k: '餐饮', l: '🍽️ 餐饮', kw: '餐饮|餐厅|小吃', useDefault: true },
+                        { k: '竞品', l: '⚔️ ' + ind + '竞品', kw: ind, useDefault: true },
+                    ];
+                    for (var t = 0; t < tasks.length; t++) {
+                        lg(tasks[t].l + '...');
+                        try {
+                            if (tasks[t].useDefault) {
+                                var r = await amapPOISearch(loc, tasks[t].kw, rad);
+                                currentEval.rawData[tasks[t].k] = r;
+                                lg('  → ' + r.length + '个');
+                            } else if (tasks[t].k === '学校') {
+                                var r = await searchSchools(loc, rad);
+                                currentEval.rawData[tasks[t].k] = r;
+                                lg('  → ' + r.length + '个（多关键词去重）');
+                            }
+                        } catch (e) { currentEval.rawData[tasks[t].k] = [];
+                            lg('  → 失败'); }
+                        await sleep(200);
+                    }
+                    currentEval.status = 'data_collected';
+                    saveCurrent();
+                    updateSteps(3);
+                    lg('');
+                    lg('🧠 AI分析中...');
+                    await runAI();
+                } catch (e) { lg('❌ ' + e.message); }
+            }
+
+            async function runAI() {
+                var d = currentEval.rawData;
+
+                function c(k) { return (d[k] || []).length; }
+                var sum = {
+                    地址: currentEval.address,
+                    行业: currentEval.industry,
+                    半径: currentEval.radius + 'm',
+                    统计: { 小区: c('住宅小区'), 写字楼: c('写字楼'), 公司: c('公司企业'), 学校: c('学校'), 医院: c('医院'), 商场: c('商场'),
+                        地铁: c('地铁站'), 公交: c('公交站'), 停车: c('停车场'), 餐饮: c('餐饮'), 竞品: c('竞品') },
+                    竞品详情: (d['竞品'] || []).slice(0, 10).map(function(p) { return { 名称: p.name, 距离: fmtDist(p.distance),
+                            地址: (p.address || '').slice(0, 40), 评分: (p.biz_ext && p.biz_ext.rating) || '?' }; }),
+                    小区列表: (d['住宅小区'] || []).slice(0, 10).map(function(p) { return p.name + ' (' + fmtDist(p.distance) +
+                            ')'; })
+                };
+                var p = '你是选址分析专家。根据数据做四层分析。\n数据：' + JSON.stringify(sum, null, 2) +
+                    '\n要求：\n第一层·整体客群：人口预估、人群结构\n第二层·有效客群：目标匹配度\n第三层·地形垄断：交通便利、阻隔\n第四层·竞争对手：格局、差异化\n生成5-8项实地考察清单，每项含title/aiEstimate/method/reference/inputType/unit\n输出纯JSON';
+                try {
+                    var r = await callDS([{ role: 'system', content: '只输出JSON，格式：{"populationEstimate":"","crowdProfile":"","layer1_score":70,"layer1_analysis":"","layer2_score":70,"layer2_analysis":"","layer3_score":65,"layer3_analysis":"","layer4_score":60,"layer4_analysis":"","overall_score":68,"overall_summary":"","risks":[],"opportunities":[],"checklist":[{"id":"c1","title":"","aiEstimate":"","method":"","reference":"","inputType":"number","unit":""}]}' },
+                        { role: 'user', content: p }], 0.4, 4000);
+                    var m = r.match(/\{[\s\S]*\}/); if (!m) throw new Error('JSON解析失败');
+                    var a = JSON.parse(m[0]);
+                    currentEval.aiAnalysis = a;
+                    currentEval.fieldChecklist = a.checklist || [];
+                    currentEval.status = 'ai_analyzed';
+                    currentEval.chatHistory4 = step4Chat;
+                    currentEval.chatHistory5 = step5Chat;
+                    saveCurrent();
+                    renderStep4();
+                } catch (e) {
+                    render('<div class="card"><div class="card-title">❌ AI失败</div><p>' + esc(e.message) +
+                        '</p><button class="btn btn-primary" id="ra">🔄重试</button></div>');
+                    document.getElementById('ra').addEventListener('click', runAI);
+                }
+            }
+
+            // ===== Step 4 =====
+            function renderStep4() {
+                updateSteps(4);
+                var a = currentEval.aiAnalysis;
+                var d = currentEval.rawData;
+                step4Chat = currentEval.chatHistory4 || [];
+
+                function v(k) { return (d[k] || []).length; }
+                var cats = [
+                    { k: '竞品', t: '⚔️ ' + currentEval.industry + ' 竞品', def: true },
+                    { k: '住宅小区', t: '🏠 住宅小区', def: true },
+                    { k: '写字楼', t: '🏢 写字楼', def: false },
+                    { k: '公司企业', t: '🏭 公司企业', def: false },
+                    { k: '学校', t: '🏫 学校（多关键词去重）', def: false },
+                    { k: '地铁站', t: '🚇 地铁站', def: false },
+                    { k: '公交站', t: '🚌 公交站', def: false },
+                    { k: '餐饮', t: '🍽️ 餐饮', def: false },
+                    { k: '停车场', t: '🅿️ 停车场', def: false },
+                    { k: '医院', t: '🏥 医院', def: false },
+                    { k: '商场', t: '🛍️ 商场', def: false },
+                ];
+                var tables = '';
+                for (var c = 0; c < cats.length; c++) {
+                    var cd = d[cats[c].k] || [];
+                    if (cd.length > 0) tables += renderCollapsible(cats[c].t + ' (' + cd.length + '个)',
+                        renderPOITable(cd, 30), cats[c].def);
+                }
+                var h = '';
+                h += '<div class="summary-card"><div class="summary-label">📊 初步评估（半径' + currentEval.radius +
+                    'm）</div>';
+                h += '<div class="summary-score">' + (a.overall_score || '--') + '</div>';
+                h += '<div style="font-size:11px;margin-top:3px;opacity:0.8;">' + esc(a.overall_summary || '') +
+                '</div>';
+                h += '<div class="summary-grid">';
+                h += '<div class="summary-item"><div class="summary-item-label">整体客群</div><div class="summary-item-value">' +
+                    (a.layer1_score || '--') + '分</div></div>';
+                h += '<div class="summary-item"><div class="summary-item-label">有效客群</div><div class="summary-item-value">' +
+                    (a.layer2_score || '--') + '分</div></div>';
+                h += '<div class="summary-item"><div class="summary-item-label">地形垄断</div><div class="summary-item-value">' +
+                    (a.layer3_score || '--') + '分</div></div>';
+                h += '<div class="summary-item"><div class="summary-item-label">竞争对手</div><div class="summary-item-value">' +
+                    (a.layer4_score || '--') + '分</div></div>';
+                h += '</div></div>';
+                h +=
+                '<div class="card"><div class="card-title"><span class="layer-badge badge-layer1">一</span>整体客户</div><div class="ai-block">' +
+                    esc(a.layer1_analysis || '') + '</div><div style="font-size:10px;color:var(--text-muted);">👥' +
+                    esc(a.crowdProfile || '') + ' 📊' + esc(a.populationEstimate || '') + '</div></div>';
+                h +=
+                '<div class="card"><div class="card-title"><span class="layer-badge badge-layer2">二</span>有效客户</div><div class="ai-block">' +
+                    esc(a.layer2_analysis || '') + '</div></div>';
+                h +=
+                '<div class="card"><div class="card-title"><span class="layer-badge badge-layer3">三</span>地形垄断</div><div class="ai-block">' +
+                    esc(a.layer3_analysis || '') + '</div></div>';
+                h +=
+                '<div class="card"><div class="card-title"><span class="layer-badge badge-layer4">四</span>竞争对手</div><div class="ai-block">' +
+                    esc(a.layer4_analysis || '') + '</div></div>';
+                h +=
+                '<div class="card"><div class="card-title">⚠️风险 & 💡机会</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;"><div style="background:var(--danger-light);padding:8px;border-radius:6px;"><strong>⚠️风险</strong>';
+                var rs = a.risks || [];
+                for (var ri = 0; ri < rs.length; ri++) h += '<div style="font-size:10px;margin-top:2px;">• ' + esc(rs[
+                    ri]) + '</div>';
+                h +=
+                    '</div><div style="background:var(--success-light);padding:8px;border-radius:6px;"><strong>💡机会</strong>';
+                var ops = a.opportunities || [];
+                for (var oi = 0; oi < ops.length; oi++) h += '<div style="font-size:10px;margin-top:2px;">• ' + esc(ops[
+                    oi]) + '</div>';
+                h += '</div></div></div>';
+                h += '<div class="card"><div class="card-title">📊 高德搜索原始数据</div><div style="font-size:10px;color:var(--text-muted);margin-bottom:6px;">⬇ 点击展开查看每家店的名称和距离</div>' +
+                    tables + '</div>';
+                h +=
+                '<div class="card"><div class="card-title">💬 AI 问答 <span style="font-size:10px;color:var(--text-muted);">（基于初步报告·半结论）</span></div>';
+                h += renderChatPanel('chat4', 'step4');
+                h += '</div>';
+                h += '<div class="card"><div class="card-title">📋 实地考察清单</div>';
+                var cl = currentEval.fieldChecklist || [];
+                for (var ci = 0; ci < cl.length; ci++) h += buildCheckItem(cl[ci], ci);
+                h += '</div>';
+                h +=
+                '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:40px;"><button class="btn btn-primary" id="bs" style="flex:1;justify-content:center;">✅ 提交实地数据</button><button class="btn btn-outline btn-sm" id="bsv">💾 本地暂存</button><button class="btn btn-ghost btn-sm" id="bnw">🆕 新建</button></div>';
+                render(h);
+                document.getElementById('bs').addEventListener('click', submitField);
+                document.getElementById('bsv').addEventListener('click', function() { saveCurrent();
+                    toast('💾 已保存到本地'); });
+                document.getElementById('bnw').addEventListener('click', startNew);
+                if (step4Chat.length > 0) { var cb4 = document.getElementById('chat4'); if (cb4) cb4.classList.add(
+                    'show'); }
+                // ✅ 第四步完成，自动存储到云端
+                saveCurrentToCloud();
+            }
+
+            function buildCheckItem(item, idx) {
+                var fd = currentEval.fieldData || {};
+                var sv = fd[item.id] || '';
+                var done = sv !== '' && sv !== null;
+                var inp = '';
+                switch (item.inputType) {
+                    case 'number':
+                        inp = '<input type="number" class="form-input" id="f_' + item.id + '" value="' + esc(String(
+                            sv)) + '" style="max-width:160px;"> ' + (item.unit ? esc(item.unit) : '');
+                        break;
+                    case 'select':
+                        var ops = item.inputOptions || [];
+                        inp = '<select class="form-select" id="f_' + item.id +
+                        '" style="max-width:200px;"><option value="">请选</option>';
+                        for (var o = 0; o < ops.length; o++) inp += '<option value="' + esc(ops[o]) + '"' + (sv ===
+                            ops[o] ? ' selected' : '') + '>' + esc(ops[o]) + '</option>';
+                        inp += '</select>';
+                        break;
+                    case 'text':
+                        inp = '<textarea class="form-textarea" id="f_' + item.id + '" rows="2">' + esc(String(sv)) +
+                            '</textarea>';
+                        break;
+                    default:
+                        inp = '<input type="text" class="form-input" id="f_' + item.id + '" value="' + esc(String(
+                            sv)) + '">';
+                }
+                var h = '<div class="checklist-item' + (done ? ' completed' : '') + '">';
+                h += '<div class="checklist-header"><div class="checklist-num' + (done ? ' done-num' : '') + '">' + (
+                    idx + 1) + '</div><div class="checklist-title">' + esc(item.title) +
+                    '</div><span style="font-size:9px;">' + (done ? '✅' : '⏳') + '</span></div>';
+                if (item.aiEstimate) h += '<div style="font-size:10px;margin-bottom:3px;">🤖 ' + esc(item.aiEstimate) +
+                    '</div>';
+                if (item.method) h += '<div class="method-box">💡 ' + esc(item.method) + '</div>';
+                if (item.reference) h += '<div class="ref-box">📌 ' + esc(item.reference) + '</div>';
+                h += '<div style="margin-top:4px;"><label style="font-size:10px;font-weight:600;">✍️ 实测：</label>' + inp +
+                    '</div></div>';
+                return h;
+            }
+
+            // ===== Step 5 =====
+            async function submitField() {
+                var fd = {};
+                var cl = currentEval.fieldChecklist || [];
+                for (var i = 0; i < cl.length; i++) { var el = document.getElementById('f_' + cl[i].id); if (el && el
+                        .value.trim()) fd[cl[i].id] = el.value.trim(); }
+                currentEval.fieldData = fd;
+                if (Object.keys(fd).length === 0) { toast('请至少填一项'); return; }
+                updateSteps(5);
+                render(
+                    '<div class="card"><div class="card-title">🧠 生成最终报告...</div><div class="spinner-wrap"><div class="spinner"></div><span>AI分析中...</span></div></div>'
+                    );
+                try {
+                    var p = '初步分析：' + JSON.stringify(currentEval.aiAnalysis) + '\n实地数据：' + JSON.stringify(fd) +
+                        '\n对照：' + JSON.stringify(cl.map(function(c) { return { 项目: c.title, AI预估: c.aiEstimate,
+                            实测: fd[c.id] || '未填' }; })) + '\n输出JSON';
+                    var r = await callDS([{ role: 'system',
+                        content: '只输出JSON。格式：{"finalScore":70,"verdict":"可考虑","finalSummary":"","keyFindings":[],"adjustedAnalysis":{"layer1":"","layer2":"","layer3":"","layer4":""},"actionItems":[],"comparisonToEstimate":""}' },
+                        { role: 'user', content: p }], 0.4, 3000);
+                    var m = r.match(/\{[\s\S]*\}/); if (!m) throw new Error('JSON解析失败');
+                    currentEval.finalReport = JSON.parse(m[0]);
+                    currentEval.status = 'final';
+                    step5Chat = currentEval.chatHistory5 || [];
+                    saveCurrent();
+                    renderStep5();
+                } catch (e) {
+                    render('<div class="card"><div class="card-title">❌ 失败</div><p>' + esc(e.message) +
+                        '</p><button class="btn btn-primary" id="rf">🔄 重试</button></div>');
+                    document.getElementById('rf').addEventListener('click', submitField);
+                }
+            }
+
+            function renderStep5() {
+                updateSteps(5);
+                var fr = currentEval.finalReport || {};
+                var fd = currentEval.fieldData || {};
+                var cl = currentEval.fieldChecklist || [];
+                step5Chat = currentEval.chatHistory5 || [];
+                var vc = 'var(--success)',
+                    vi = '✅';
+                if (fr.verdict === '谨慎') { vc = 'var(--warning)';
+                    vi = '⚠️'; }
+                if (fr.verdict === '建议放弃') { vc = 'var(--danger)';
+                    vi = '❌'; }
+                var h = '';
+                h += '<div class="summary-card" style="text-align:center;"><div class="summary-label">📋 最终结论（半径' +
+                    currentEval.radius + 'm）</div>';
+                h += '<div class="summary-score">' + (fr.finalScore || '--') + ' 分</div>';
+                h += '<div style="font-size:16px;font-weight:700;color:' + vc + ';margin-top:4px;">' + vi + ' ' + esc(
+                    fr.verdict || '--') + '</div>';
+                h += '<div style="font-size:12px;margin-top:4px;opacity:0.9;">' + esc(fr.finalSummary || '') +
+                '</div></div>';
+                h += '<div class="card"><div class="card-title">🔍 关键发现</div>';
+                (fr.keyFindings || []).forEach(function(f) { h +=
+                        '<div style="padding:4px 0;border-bottom:1px solid var(--border-light);font-size:12px;">• ' +
+                        esc(f) + '</div>'; });
+                h +=
+                '</div><div class="card"><div class="card-title">📊 AI预估 vs 实测</div><div style="font-size:11px;color:var(--text-secondary);margin-bottom:6px;">' +
+                    esc(fr.comparisonToEstimate || '') + '</div>';
+                cl.forEach(function(item) {
+                    var ai = item.aiEstimate || '-',
+                        ac = fd[item.id] || '未填';
+                    h +=
+                        '<div style="display:flex;justify-content:space-between;padding:3px 0;font-size:10px;border-bottom:1px dotted var(--border-light);"><span style="flex:1;">' +
+                        esc(item.title) +
+                        '</span><span style="width:65px;text-align:center;color:var(--primary);">AI:' + esc(String(
+                            ai)) + '</span><span style="width:65px;text-align:center;font-weight:600;">实测:' + esc(
+                            String(ac)) + '</span></div>';
+                });
+                h += '</div>';
+                if (fr.adjustedAnalysis) {
+                    h += '<div class="card"><div class="card-title">🔄 修正后四层分析</div>';
+                    h += '<div class="ai-block">' + esc(fr.adjustedAnalysis.layer1 || '') + '</div>';
+                    h += '<div class="ai-block success">' + esc(fr.adjustedAnalysis.layer2 || '') + '</div>';
+                    h += '<div class="ai-block warning">' + esc(fr.adjustedAnalysis.layer3 || '') + '</div>';
+                    h += '<div class="ai-block danger">' + esc(fr.adjustedAnalysis.layer4 || '') + '</div></div>';
+                }
+                if (fr.actionItems && fr.actionItems.length > 0) {
+                    h += '<div class="card"><div class="card-title">📝 后续待办</div>';
+                    fr.actionItems.forEach(function(item) { h +=
+                            '<div style="display:flex;align-items:center;gap:4px;padding:3px 0;font-size:11px;"><input type="checkbox"> ' +
+                            esc(item) + '</div>'; });
+                    h += '</div>';
+                }
+                h +=
+                '<div class="card"><div class="card-title">💬 AI 问答 <span style="font-size:10px;color:var(--text-muted);">（基于最终报告·全结论）</span></div>';
+                h += renderChatPanel('chat5', 'step5');
+                h += '</div>';
+                h +=
+                '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:40px;"><button class="btn btn-outline" id="bb" style="flex:1;justify-content:center;">🔙 返回修改</button><button class="btn btn-outline btn-sm" id="bsv2">💾 本地暂存</button><button class="btn btn-ghost btn-sm" id="bn2">🆕 新建</button></div>';
+                render(h);
+                document.getElementById('bb').addEventListener('click', function() { renderStep4(); });
+                document.getElementById('bsv2').addEventListener('click', function() { saveCurrent();
+                    toast('💾 已保存到本地'); });
+                document.getElementById('bn2').addEventListener('click', startNew);
+                if (step5Chat.length > 0) { var cb5 = document.getElementById('chat5'); if (cb5) cb5.classList.add(
+                    'show'); }
+                toast('✅ 最终报告已生成');
+                // ✅ 第五步完成，自动存储到云端
+                saveCurrentToCloud();
+            }
+
+            // ===== 历史 =====
+            function showHistory() {
+                updateSteps(0);
+                var evals = getLocalEvals();
+                if (!evals.length) {
+                    render(
+                        '<div class="empty-state"><div class="empty-icon">📂</div><div>暂无本地记录</div><button class="btn btn-primary" id="be" style="margin-top:10px;">🆕 新建</button></div>'
+                        );
+                    document.getElementById('be').addEventListener('click', startNew);
+                    return;
+                }
+                var h = '<div class="card"><div class="card-title" style="justify-content:space-between;"><span>📂 本地历史 (' +
+                    evals.length + ')</span><button class="btn btn-ghost btn-xs" id="bc">🗑 清空</button></div></div>';
+                var rev = evals.slice().reverse();
+                for (var i = 0; i < rev.length; i++) {
+                    var e = rev[i],
+                        sc = '--';
+                    if (e.finalReport) sc = e.finalReport.finalScore || '--';
+                    var st = e.status === 'final' ? '✅' : '⏳';
+                    h += '<div class="history-item" data-id="' + esc(e.id) + '"><div><div style="font-weight:600;">📍 ' +
+                        esc(e.address || '') + '</div><div style="font-size:10px;color:var(--text-secondary);">🏪 ' +
+                        esc(e.industry || '') + ' · ' + st + ' · ' + esc(e.radius || '?') +
+                        'm</div></div><div style="text-align:right;"><div style="font-weight:700;">' + sc +
+                        '</div><button class="btn btn-ghost btn-xs bd" data-id="' + esc(e.id) +
+                        '">🗑</button></div></div>';
+                }
+                h += '<div style="height:40px;"></div>';
+                render(h);
+                document.getElementById('bc').addEventListener('click', function() { if (!confirm(
+                        '清空本地所有记录？')) return;
+                    localStorage.removeItem('site_evals_v7');
+                    toast('🗑 已清空');
+                    showHistory(); });
+                var its = document.querySelectorAll('.history-item');
+                for (var j = 0; j < its.length; j++) its[j].addEventListener('click', function() { loadEval(this
+                        .getAttribute('data-id')); });
+                var ds = document.querySelectorAll('.bd');
+                for (var k = 0; k < ds.length; k++) ds[k].addEventListener('click', function(e) { e
+                    .stopPropagation();
+                    deleteEval(this.getAttribute('data-id')); });
+            }
+
+            function loadEval(id) {
+                var evals = getLocalEvals();
+                var f = null;
+                for (var i = 0; i < evals.length; i++) { if (evals[i].id === id) { f = evals[i]; break; } }
+                if (!f) { toast('未找到'); return; }
+                currentEval = JSON.parse(JSON.stringify(f));
+                step4Chat = currentEval.chatHistory4 || [];
+                step5Chat = currentEval.chatHistory5 || [];
+                if (currentEval.status === 'final') renderStep5();
+                else if (currentEval.status === 'ai_analyzed' || currentEval.status === 'field_completed')
+                    renderStep4();
+                else if (currentEval.status === 'data_collected') { updateSteps(3);
+                    runAI(); } else renderStep1();
+                toast('📂 已加载');
+            }
+
+            function deleteEval(id) {
+                if (!confirm('删除？')) return;
+                var evals = getLocalEvals();
+                var n = [];
+                for (var i = 0; i < evals.length; i++) { if (evals[i].id !== id) n.push(evals[i]); }
+                saveLocalEvals(n);
+                toast('已删除');
+                showHistory();
+            }
+
+            function startNew() { currentEval = createEmpty();
+                step4Chat = [];
+                step5Chat = [];
+                renderStep1(); }
+
+            function init() {
+                currentEval = createEmpty();
+                renderStep1();
+                console.log('📍 V8.0 | ✅关闭按钮修复 | ✅事件委托 | ✅云端自动存储 | ✅学校专项搜索');
+            }
+            init();
+        })();
+    </script>
+</body>
+</html>
