@@ -4,5 +4,24 @@
     "time": "2026-05-10T12:04:29.874Z",
     "msg": "云端存储测试",
     "num": 486
+  },
+  {
+    "id": "eval_1778414677242",
+    "date": "2026-05-10T12:04:37.242Z",
+    "address": "测试地址：成都市锦江区春熙路",
+    "industry": "奶茶店",
+    "radius": 3000,
+    "status": "final",
+    "aiAnalysis": {
+      "overall_score": 72,
+      "overall_summary": "测试AI分析结果"
+    },
+    "rawDataSummary": {
+      "小区": 8,
+      "写字楼": 5,
+      "学校": 3,
+      "竞品": 12,
+      "地铁站": 2
+    }
   }
 ]
