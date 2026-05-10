@@ -868,5 +868,186 @@
       "竞品": 75,
       "地铁站": 0
     }
+  },
+  {
+    "id": "e_1778427885005_q6e1",
+    "date": "2026-05-10T15:45:36.028Z",
+    "address": "铜仁市碧江区",
+    "industry": "包子店",
+    "radius": 3000,
+    "status": "ai_analyzed",
+    "weatherData": {
+      "city": "铜仁市",
+      "adcode": "520600",
+      "province": "贵州",
+      "reporttime": "2026-05-10 23:32:11",
+      "casts": [
+        {
+          "date": "2026-05-10",
+          "week": "7",
+          "dayweather": "多云",
+          "nightweather": "阴",
+          "daytemp": "29",
+          "nighttemp": "17",
+          "daywind": "北",
+          "nightwind": "北",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "29.0",
+          "nighttemp_float": "17.0"
+        },
+        {
+          "date": "2026-05-11",
+          "week": "1",
+          "dayweather": "阴",
+          "nightweather": "阴",
+          "daytemp": "28",
+          "nighttemp": "17",
+          "daywind": "北",
+          "nightwind": "北",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "28.0",
+          "nighttemp_float": "17.0"
+        },
+        {
+          "date": "2026-05-12",
+          "week": "2",
+          "dayweather": "阵雨",
+          "nightweather": "雷阵雨",
+          "daytemp": "19",
+          "nighttemp": "17",
+          "daywind": "北",
+          "nightwind": "北",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "19.0",
+          "nighttemp_float": "17.0"
+        },
+        {
+          "date": "2026-05-13",
+          "week": "3",
+          "dayweather": "中雨",
+          "nightweather": "多云",
+          "daytemp": "22",
+          "nighttemp": "17",
+          "daywind": "北",
+          "nightwind": "北",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "22.0",
+          "nighttemp_float": "17.0"
+        }
+      ]
+    },
+    "aiAnalysis": {
+      "populationEstimate": "约3.5万人",
+      "crowdProfile": "以本地居民和上班族为主，学生群体较多，消费水平中等",
+      "layer1_score": 70,
+      "layer1_analysis": "半径3km内小区11个、公司49家、学校12所，整体人口密度中等，但住宅区距离较远（1.4-2.5km），日常通勤人流集中在写字楼和公司区域，基础客群有一定规模",
+      "layer2_score": 70,
+      "layer2_analysis": "上班族和学生是包子店高频消费群体，49家公司+10栋写字楼提供稳定早餐/午餐需求，12所学校贡献学生客流，但无医院导致部分人群缺失，有效客群比例较好",
+      "layer3_score": 65,
+      "layer3_analysis": "公共交通有13个公交站点但无地铁，停车位7个，小区分散且距中心较远，步行可达性一般，地形无明显障碍，但依赖交通工具将客流转化为到店消费",
+      "layer4_score": 65,
+      "layer4_analysis": "统计显示0家竞品，但需实地验证是否包含早餐摊、便利店等隐性竞争，无直接竞品为优势，但市场需教育，且新开发区人流聚集度待观察",
+      "overall_score": 68,
+      "overall_summary": "碧江区该选址周边以公司、学校、住宅混合形态为主，无直接竞品是最大机会，但小区分散、交通配套一般，需通过外卖和线下活动吸引客流。天气方面，5月有阵雨和中雨，户外客流可能减少，适合加强外卖运营",
+      "weatherNote": "铜仁市5月10-13日天气由多云转阴、阵雨、中雨，温度17-29℃，整体适宜营业。雨天户外客流下降，但包子店可主推外卖配送，且气温舒适利于面食保存。建议准备雨棚或线上促销应对降雨日",
+      "risks": [
+        "小区距离较远（1.4-2.5km），步行吸引力弱，需依赖公交或停车位",
+        "天气预报显示有连续降雨日，可能影响到店客流",
+        "周边无医院、地铁等强引流设施，夜间客流可能不足"
+      ],
+      "opportunities": [
+        "统计内竞品为0，可快速建立品牌认知和客户粘性",
+        "周边有12所学校，可开展学生早餐优惠或团餐合作",
+        "49家公司+10栋写字楼提供稳定的工作日早午餐需求",
+        "天气转暖后，户外早餐摊位可增加流动性客源"
+      ],
+      "checklist": [
+        {
+          "id": "c1",
+          "title": "早高峰人流量实测",
+          "aiEstimate": "预计500-800人次/小时",
+          "method": "在周边写字楼出口、公交站统计7:30-9:00步行人数",
+          "reference": "包子店盈亏平衡需每日客流≥300人",
+          "inputType": "number",
+          "unit": "人次/小时"
+        },
+        {
+          "id": "c2",
+          "title": "小区入住率调查",
+          "aiEstimate": "约60%-70%",
+          "method": "实地走访碧桂园·奥林湖山等5个小区，观察亮灯率和门卫访谈",
+          "reference": "入住率＞50%才有稳定常住消费",
+          "inputType": "number",
+          "unit": "百分比"
+        },
+        {
+          "id": "c3",
+          "title": "学校开放情况与用餐需求",
+          "aiEstimate": "12所学校中有8所允许学生外出就餐",
+          "method": "询问校门口保安或周边餐饮店主，确认学生外出比例及早餐习惯",
+          "reference": "对外出就餐学校可提供预包装包子套餐",
+          "inputType": "number",
+          "unit": "所"
+        },
+        {
+          "id": "c4",
+          "title": "隐形竞品排查",
+          "aiEstimate": "预计存在3-5家早餐摊/便利店",
+          "method": "在半径1km内步行，记录所有售卖包子、馒头、速冻早餐的摊位和店铺",
+          "reference": "统计内竞品为0，需实地验证真实竞争强度",
+          "inputType": "number",
+          "unit": "家"
+        },
+        {
+          "id": "c5",
+          "title": "外卖骑手密度与配送时长",
+          "aiEstimate": "高峰时段骑手响应时间约15分钟",
+          "method": "打开外卖平台查看周边活跃骑手数量，或询问美团/饿了么站点",
+          "reference": "配送时长≤30分钟是包子外卖的关键指标",
+          "inputType": "number",
+          "unit": "分钟"
+        },
+        {
+          "id": "c6",
+          "title": "停车便利性评估",
+          "aiEstimate": "现有7个停车位，高峰时段使用率90%",
+          "method": "在9:00-10:00和17:00-18:00观察停车位剩余情况",
+          "reference": "自驾客群占比若>20%，需确保临时停车位≥5个",
+          "inputType": "number",
+          "unit": "个"
+        },
+        {
+          "id": "c7",
+          "title": "天气对户外就餐的影响",
+          "aiEstimate": "雨天客流下降40%-50%",
+          "method": "查阅往年5月同期降雨天数，并模拟雨天步行动线",
+          "reference": "准备雨棚或主推外卖可抵消部分损失",
+          "inputType": "number",
+          "unit": "百分比"
+        },
+        {
+          "id": "c8",
+          "title": "门面租金与面积匹配度",
+          "aiEstimate": "预估月租金6000-8000元",
+          "method": "联系周边空置商铺中介，对比30-50㎡租金均价",
+          "reference": "租金占营业额比例应≤25%",
+          "inputType": "number",
+          "unit": "元/月"
+        }
+      ]
+    },
+    "fieldData": {},
+    "finalReport": null,
+    "rawDataSummary": {
+      "小区": 11,
+      "写字楼": 10,
+      "学校": 12,
+      "竞品": 0,
+      "地铁站": 0
+    }
   }
 ]
