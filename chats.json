@@ -566,5 +566,176 @@
       "竞品": 0,
       "地铁站": 0
     }
+  },
+  {
+    "id": "e_1778425954196_lqh5",
+    "date": "2026-05-10T15:13:39.880Z",
+    "address": "重庆市垫江县新明镇",
+    "industry": "包子店",
+    "radius": 3000,
+    "status": "ai_analyzed",
+    "weatherData": {
+      "city": "重庆市",
+      "adcode": "500000",
+      "province": "重庆",
+      "reporttime": "2026-05-10 23:03:40",
+      "casts": [
+        {
+          "date": "2026-05-10",
+          "week": "7",
+          "dayweather": "多云",
+          "nightweather": "多云",
+          "daytemp": "30",
+          "nighttemp": "19",
+          "daywind": "东南",
+          "nightwind": "东南",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "30.0",
+          "nighttemp_float": "19.0"
+        },
+        {
+          "date": "2026-05-11",
+          "week": "1",
+          "dayweather": "晴",
+          "nightweather": "多云",
+          "daytemp": "30",
+          "nighttemp": "19",
+          "daywind": "南",
+          "nightwind": "南",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "30.0",
+          "nighttemp_float": "19.0"
+        },
+        {
+          "date": "2026-05-12",
+          "week": "2",
+          "dayweather": "多云",
+          "nightweather": "阴",
+          "daytemp": "28",
+          "nighttemp": "19",
+          "daywind": "东北",
+          "nightwind": "东北",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "28.0",
+          "nighttemp_float": "19.0"
+        },
+        {
+          "date": "2026-05-13",
+          "week": "3",
+          "dayweather": "多云",
+          "nightweather": "晴",
+          "daytemp": "28",
+          "nighttemp": "19",
+          "daywind": "东北",
+          "nightwind": "东北",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "28.0",
+          "nighttemp_float": "19.0"
+        }
+      ]
+    },
+    "aiAnalysis": {
+      "populationEstimate": "约7.5万-10万人",
+      "crowdProfile": "以社区居民、学生、医院陪护家属及上班族为主，家庭型消费占比较高，早餐及午餐时段需求旺盛",
+      "layer1_score": 70,
+      "layer1_analysis": "3000米半径内小区75个、学校132所、医院47家，人口密度高，基础客群充足。但写字楼仅4栋、商场4个，商务客流偏弱，整体客源结构偏向刚需家庭与学生群体",
+      "layer2_score": 70,
+      "layer2_analysis": "学校、医院、小区是早餐/午餐高频场景，有效客群基数大。但竞品48家（含多家评分4.0以上），同质化竞争激烈，需差异化定位才能转化有效客流",
+      "layer3_score": 65,
+      "layer3_analysis": "区域内小区、学校分布较均匀，无明显地形垄断优势。主要道路（月阳路、天宝路等）已有多家包子店占据，新进入者需在选址上选择人流交汇点或空白缺口",
+      "layer4_score": 60,
+      "layer4_analysis": "竞品48家，附近10家详情中评分3.0-4.0，距离300-700米密集分布，产品同质化严重。欧包子(3.4)、李卤卤夜包子(4.0)、成记包子(4.0)等已建立口碑，新店需在品质、服务或品类创新上突破",
+      "overall_score": 66,
+      "overall_summary": "客群基础扎实但竞争激烈，整体选址可行性中等偏高。建议优先选择学校、医院出入口或大型小区主通道，并在早餐品质与外卖效率上建立优势",
+      "weatherNote": "5月垫江气温28-30°C，多云转晴为主，适合户外出行，有利于早餐时段堂食客流。但午后高温可能抑制下午时段消费，建议增加冷饮或凉拌小食；外卖受天气影响较小，可重点推广",
+      "risks": [
+        "竞品数量过多（48家），存量市场内卷严重，价格战风险高",
+        "已有4家评分4.0以上竞品，品牌忠诚度难突破",
+        "缺少地铁，公交75个站点但覆盖范围有限，夜间客流可能不足"
+      ],
+      "opportunities": [
+        "学校132所（含中小学、幼儿园），早餐刚需稳定，可利用校门口限时人流",
+        "医院47家，陪护人员对方便快捷的包子需求大，可拓展医院外送",
+        "小区75个，适宜建立社区会员制或团购模式，锁定复购"
+      ],
+      "checklist": [
+        {
+          "id": "c1",
+          "title": "早高峰学校周边人流实测",
+          "aiEstimate": "预计7:00-8:00每校门口人流量约200-500人",
+          "method": "在最近的3所中小学和2所幼儿园门口蹲点计数",
+          "reference": "圣湖南庭、园林雅苑、垫江碧桂园周边学校分布",
+          "inputType": "number",
+          "unit": "人次/小时"
+        },
+        {
+          "id": "c2",
+          "title": "医院出入口早餐消费调查",
+          "aiEstimate": "垫江县人民医院、中医院周边包子店日均销量约300份",
+          "method": "观察并询问医院门口摊贩或便利店包子销售情况",
+          "reference": "医院47家，主选距离500米内的综合性医院",
+          "inputType": "number",
+          "unit": "份/天"
+        },
+        {
+          "id": "c3",
+          "title": "竞品高峰期出品速度测试",
+          "aiEstimate": "评分4.0的竞品出餐速度约2分钟/单",
+          "method": "在7:30-8:30到李卤卤夜包子、成记包子排队实测等候时间",
+          "reference": "竞品详情中评分4.0的两家店",
+          "inputType": "number",
+          "unit": "分钟/单"
+        },
+        {
+          "id": "c4",
+          "title": "小区出入口外卖包装需求验证",
+          "aiEstimate": "30%的居民愿意提前预订包子带走",
+          "method": "在月河小区、锦绣江都门口发放问卷或观察外卖骑手取餐频次",
+          "reference": "小区列表前5个小区",
+          "inputType": "number",
+          "unit": "百分比"
+        },
+        {
+          "id": "c5",
+          "title": "可租赁铺位周边步行视线评估",
+          "aiEstimate": "理想铺位需临主干道且可见度≥50米",
+          "method": "沿月阳路、天宝路、新华街步行，记录空置商铺及遮挡情况",
+          "reference": "竞品集中分布路段，寻找空隙位置",
+          "inputType": "number",
+          "unit": "米"
+        },
+        {
+          "id": "c6",
+          "title": "午间办公区与商场客流衰减度",
+          "aiEstimate": "写字楼+商场仅8处，午餐客流可能不足",
+          "method": "12:00-13:00在垫江碧桂园附近写字楼和商场出入口监控人流",
+          "reference": "写字楼4栋、商场4个（包含碧桂园商业）",
+          "inputType": "number",
+          "unit": "人次/小时"
+        },
+        {
+          "id": "c7",
+          "title": "天气影响下的外卖保温测试",
+          "aiEstimate": "30°C以上天气外卖袋需加冰袋或锡纸保温",
+          "method": "模拟外卖配送距离1km，测试不同包装下包子口感变化",
+          "reference": "天气数据中最高温30°C",
+          "inputType": "number",
+          "unit": "评分(1-10)"
+        }
+      ]
+    },
+    "fieldData": {},
+    "finalReport": null,
+    "rawDataSummary": {
+      "小区": 75,
+      "写字楼": 4,
+      "学校": 132,
+      "竞品": 48,
+      "地铁站": 0
+    }
   }
 ]
