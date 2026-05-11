@@ -1229,5 +1229,97 @@
     },
     "fieldData": {},
     "finalReport": null
+  },
+  {
+    "id": "e_1778462384042_4oi34p",
+    "date": "2026-05-11T01:20:41.184Z",
+    "address": "成都市锦江区春熙路",
+    "industry": "奶茶店",
+    "radius": 800,
+    "status": "ai_analyzed",
+    "aiAnalysis": {
+      "populationEstimate": "约5-8万人（基于小区、写字楼、学校数量估算）",
+      "crowdProfile": "以年轻上班族、学生、游客为主，消费能力中高，追求时尚与便捷",
+      "layer1_score": 70,
+      "layer1_analysis": "周边小区125个、写字楼125个、学校61所，人口密度高，但竞品72家导致客流分流，整体客流潜力较大但需精准定位",
+      "layer2_score": 70,
+      "layer2_analysis": "餐饮120家，奶茶竞品72家，竞争激烈；商场37个、地铁3站带来大量流动客流，差异化产品可获机会",
+      "layer3_score": 65,
+      "layer3_analysis": "商圈成熟，租金成本高；停车位充足（125个），但公交站点显示为0，可能依赖地铁和步行，综合成本收益需权衡",
+      "layer4_score": 60,
+      "layer4_analysis": "3个地铁站覆盖，交通便利；公交站点数据缺失或为零，非完全依赖公交；停车位多适合自驾，但需留意城市管理",
+      "overall_score": 68,
+      "overall_summary": "春熙路为成都核心商圈，客流量巨大，但奶茶竞争白热化，需突出产品特色与品牌力。建议利用地铁引流，主打年轻群体，同时控制租金成本。",
+      "weatherNote": "天气数据来自绵阳市（adcode:510700），未来几天以多云阴天为主，温度18~30℃，对奶茶店室外排队或户外活动影响较小，但小雨日（14日）可能微降客流。",
+      "risks": [
+        "奶茶竞品多达72家，同质化竞争激烈",
+        "公交站点数据为0，依赖地铁和步行，可能覆盖不到部分人群",
+        "租金成本高，若客流未达预期易亏损",
+        "天气数据与选址地（成都）不匹配，实际天气可能有差异"
+      ],
+      "opportunities": [
+        "春熙路商圈日均客流超10万，潜在客户基数大",
+        "地铁3站环绕，可吸引换乘人群",
+        "商场37个，可与商场合作联营或进驻内部铺位",
+        "停车位充足，自驾客群消费力强",
+        "学校61所，学生群体是奶茶高频消费人群"
+      ],
+      "checklist": [
+        {
+          "id": "c1",
+          "title": "人口密度",
+          "aiEstimate": "高",
+          "method": "基于小区、写字楼、学校数量估算",
+          "reference": "小区125个、写字楼125个、学校61个",
+          "inputType": "number",
+          "unit": "个"
+        },
+        {
+          "id": "c2",
+          "title": "竞品密度",
+          "aiEstimate": "高",
+          "method": "统计800米半径内竞品数量",
+          "reference": "竞品72家",
+          "inputType": "number",
+          "unit": "家"
+        },
+        {
+          "id": "c3",
+          "title": "交通便利度",
+          "aiEstimate": "中",
+          "method": "地铁与公交站点数量加权",
+          "reference": "地铁3个、公交0个",
+          "inputType": "number",
+          "unit": "个"
+        },
+        {
+          "id": "c4",
+          "title": "商业配套",
+          "aiEstimate": "高",
+          "method": "商场和餐饮数量评估商圈活力",
+          "reference": "商场37个、餐饮120家",
+          "inputType": "number",
+          "unit": "个"
+        },
+        {
+          "id": "x1",
+          "title": "门口人流量",
+          "method": "工作日午餐计数",
+          "reference": "200-400/h",
+          "inputType": "number",
+          "unit": "人"
+        },
+        {
+          "id": "x2",
+          "title": "最近竞品距离",
+          "method": "步行实测",
+          "reference": "<100m谨慎",
+          "inputType": "number",
+          "unit": "米"
+        }
+      ]
+    },
+    "fieldData": {},
+    "finalReport": null
   }
 ]
