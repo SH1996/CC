@@ -431,5 +431,190 @@
       "竞品": 0,
       "地铁站": 0
     }
+  },
+  {
+    "id": "e_1778484016081_sbcstr",
+    "date": "2026-05-11T07:21:45.872Z",
+    "address": "四川省绵阳市梓潼县长卿镇文昌大道南段",
+    "industry": "包子铺",
+    "radius": 800,
+    "status": "ai_analyzed",
+    "weatherData": {
+      "city": "梓潼县",
+      "adcode": "510725",
+      "province": "四川",
+      "reporttime": "2026-05-11 15:07:03",
+      "casts": [
+        {
+          "date": "2026-05-11",
+          "week": "1",
+          "dayweather": "阴",
+          "nightweather": "阴",
+          "daytemp": "29",
+          "nighttemp": "17",
+          "daywind": "北",
+          "nightwind": "北",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "29.0",
+          "nighttemp_float": "17.0"
+        },
+        {
+          "date": "2026-05-12",
+          "week": "2",
+          "dayweather": "阴",
+          "nightweather": "多云",
+          "daytemp": "28",
+          "nighttemp": "16",
+          "daywind": "北",
+          "nightwind": "北",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "28.0",
+          "nighttemp_float": "16.0"
+        },
+        {
+          "date": "2026-05-13",
+          "week": "3",
+          "dayweather": "多云",
+          "nightweather": "晴",
+          "daytemp": "29",
+          "nighttemp": "19",
+          "daywind": "北",
+          "nightwind": "北",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "29.0",
+          "nighttemp_float": "19.0"
+        },
+        {
+          "date": "2026-05-14",
+          "week": "4",
+          "dayweather": "多云",
+          "nightweather": "小雨",
+          "daytemp": "30",
+          "nighttemp": "18",
+          "daywind": "北",
+          "nightwind": "北",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "30.0",
+          "nighttemp_float": "18.0"
+        }
+      ]
+    },
+    "aiAnalysis": {
+      "populationEstimate": "15820人",
+      "crowdProfile": "以社区居民、学生和公司职员为主，人口基础稳定但消费能力中等",
+      "layer1_score": 70,
+      "layer1_analysis": "周边有13个居民小区，估算人口约1.58万，人口基数较好；但属于乡镇区域，人口密度和消费水平低于城市，综合评分70分。",
+      "layer2_score": 70,
+      "layer2_analysis": "周边有19家公司和5所学校，提供稳定上班族和学生客流；餐饮店达100家，形成餐饮聚集效应，但缺乏写字楼和大型商业设施，综合评分70分。",
+      "layer3_score": 65,
+      "layer3_analysis": "无公交、地铁站点，停车位仅5个，交通设施匮乏，主要依赖步行和私家车，便利性较差，可能限制远距离客流，综合评分65分。",
+      "layer4_score": 60,
+      "layer4_analysis": "包子铺直接竞品为0，但周边餐饮总数达100家，竞争激烈；需注意差异化定位和市场份额，综合评分60分。",
+      "overall_score": 68,
+      "overall_summary": "该位置人口基础较好，有稳定的居民、学生和上班族客流，且无直接竞品，适合开设包子铺。但交通不便、餐饮竞争激烈、乡镇消费能力有限，需突出特色、加强外卖运营，并控制成本。",
+      "weatherNote": "未来四天以阴转多云为主，气温16-30°C，无明显降雨，适合经营；但夏季高温可能影响午餐时段客流，建议加强通风或提供冷饮。",
+      "risks": [
+        "交通不便，无公交地铁，停车位少，客流量受限",
+        "周边餐饮密度高（100家），竞争激烈，易被分流",
+        "乡镇区域消费能力有限，人均客单价可能偏低"
+      ],
+      "opportunities": [
+        "包子铺直接竞品为0，市场空白，先发优势明显",
+        "5所学校提供早餐和课间餐需求，公司员工有早餐/午餐需求",
+        "13个小区居民有日常早餐刚需，可发展社区会员制"
+      ],
+      "checklist": [
+        {
+          "id": "c1",
+          "title": "早餐时段实地客流计数",
+          "aiEstimate": "建议连续3天早晨6:30-9:00在门口统计过往人流及进店率",
+          "method": "人工计数或安装临时客流计数器",
+          "reference": "估算日均早餐客流≥200人方可支撑",
+          "inputType": "number",
+          "unit": "人/小时"
+        },
+        {
+          "id": "c2",
+          "title": "周边竞品暗访调查",
+          "aiEstimate": "重点调查同品类（包子、馒头、早餐店）的实际经营情况",
+          "method": "实地走访周边100家餐饮中的早餐类门店，记录品类、价格、客流",
+          "reference": "确认竞品数量及客单价，判断差异化空间",
+          "inputType": "number",
+          "unit": "家"
+        },
+        {
+          "id": "c3",
+          "title": "租金及成本评估",
+          "aiEstimate": "根据本地市场行情，月租金不超过预估月流水15%",
+          "method": "查询周边商铺租金，并计算预期日营收（假设人均10元，日均300客）",
+          "reference": "月租金≤1.35万元（按日营收3000元，15%计算）",
+          "inputType": "number",
+          "unit": "元/月"
+        },
+        {
+          "id": "c4",
+          "title": "停车位实际可用性验证",
+          "aiEstimate": "统计门口及附近实际可停非机动车/机动车位数量",
+          "method": "现场勘察早晚高峰时段停车占用情况",
+          "reference": "至少提供3个机动车位和10个非机动车位",
+          "inputType": "number",
+          "unit": "个"
+        }
+      ],
+      "_population": 15819.999999999998,
+      "_aiHouseholds": 5650
+    },
+    "fieldChecklist": [
+      {
+        "id": "c1",
+        "title": "早餐时段实地客流计数",
+        "aiEstimate": "建议连续3天早晨6:30-9:00在门口统计过往人流及进店率",
+        "method": "人工计数或安装临时客流计数器",
+        "reference": "估算日均早餐客流≥200人方可支撑",
+        "inputType": "number",
+        "unit": "人/小时"
+      },
+      {
+        "id": "c2",
+        "title": "周边竞品暗访调查",
+        "aiEstimate": "重点调查同品类（包子、馒头、早餐店）的实际经营情况",
+        "method": "实地走访周边100家餐饮中的早餐类门店，记录品类、价格、客流",
+        "reference": "确认竞品数量及客单价，判断差异化空间",
+        "inputType": "number",
+        "unit": "家"
+      },
+      {
+        "id": "c3",
+        "title": "租金及成本评估",
+        "aiEstimate": "根据本地市场行情，月租金不超过预估月流水15%",
+        "method": "查询周边商铺租金，并计算预期日营收（假设人均10元，日均300客）",
+        "reference": "月租金≤1.35万元（按日营收3000元，15%计算）",
+        "inputType": "number",
+        "unit": "元/月"
+      },
+      {
+        "id": "c4",
+        "title": "停车位实际可用性验证",
+        "aiEstimate": "统计门口及附近实际可停非机动车/机动车位数量",
+        "method": "现场勘察早晚高峰时段停车占用情况",
+        "reference": "至少提供3个机动车位和10个非机动车位",
+        "inputType": "number",
+        "unit": "个"
+      }
+    ],
+    "fieldData": {},
+    "finalReport": null,
+    "chatHistory4": [],
+    "chatHistory5": [],
+    "rawData": {
+      "小区": 13,
+      "写字楼": 0,
+      "竞品": 0,
+      "地铁站": 0
+    }
   }
 ]
