@@ -652,5 +652,206 @@
       "竞品": 0,
       "地铁站": 0
     }
+  },
+  {
+    "id": "e_1778485808828_wph9dj",
+    "date": "2026-05-11T07:50:55.265Z",
+    "address": "四川省绵阳市梓潼县长卿镇文昌大道南段四川辉氏生物技术有限公司",
+    "industry": "奶茶店",
+    "radius": 300,
+    "status": "ai_analyzed",
+    "weatherData": {
+      "city": "梓潼县",
+      "adcode": "510725",
+      "province": "四川",
+      "reporttime": "2026-05-11 15:33:28",
+      "casts": [
+        {
+          "date": "2026-05-11",
+          "week": "1",
+          "dayweather": "阴",
+          "nightweather": "阴",
+          "daytemp": "29",
+          "nighttemp": "17",
+          "daywind": "北",
+          "nightwind": "北",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "29.0",
+          "nighttemp_float": "17.0"
+        },
+        {
+          "date": "2026-05-12",
+          "week": "2",
+          "dayweather": "阴",
+          "nightweather": "多云",
+          "daytemp": "28",
+          "nighttemp": "16",
+          "daywind": "北",
+          "nightwind": "北",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "28.0",
+          "nighttemp_float": "16.0"
+        },
+        {
+          "date": "2026-05-13",
+          "week": "3",
+          "dayweather": "多云",
+          "nightweather": "晴",
+          "daytemp": "29",
+          "nighttemp": "19",
+          "daywind": "北",
+          "nightwind": "北",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "29.0",
+          "nighttemp_float": "19.0"
+        },
+        {
+          "date": "2026-05-14",
+          "week": "4",
+          "dayweather": "多云",
+          "nightweather": "小雨",
+          "daytemp": "30",
+          "nighttemp": "18",
+          "daywind": "北",
+          "nightwind": "北",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "30.0",
+          "nighttemp_float": "18.0"
+        }
+      ]
+    },
+    "aiAnalysis": {
+      "populationEstimate": "1260人（基于1个小区450户，户均2.8人推算）",
+      "crowdProfile": "周边以居民（小区住户）、公司员工（3家）、学校师生（1所）为主，暂无直接竞品，但已有14家餐饮门店形成餐饮聚集效应",
+      "layer1_score": 70,
+      "layer1_analysis": "半径300m内仅1个小区估算人口1260人，人口基数中等偏小；但周边有公司和学校补充人流，且县城区域密度适中，支撑基础消费",
+      "layer2_score": 70,
+      "layer2_analysis": "周边配套包括餐饮14家、公司3家、学校1所、停车位3处，能满足基本生活需求；缺乏商场、医院等大型引流点，但餐饮聚集可带来交叉客流",
+      "layer3_score": 65,
+      "layer3_analysis": "竞品奶茶店数量为0，市场空白；但餐饮14家（含饮品店可能）构成潜在替代竞争，需关注产品差异化",
+      "layer4_score": 60,
+      "layer4_analysis": "交通信息未知，无地铁、公交站点，停车位仅3个，可达性较差；依赖步行和自驾，需评估实际道路状况",
+      "overall_score": 68,
+      "overall_summary": "该选址位于县城工业区附近，人口基础一般但无直接竞品，周边餐饮集聚提供客流潜力；交通配套薄弱是主要短板，适合低成本试水或主打外卖模式",
+      "weatherNote": "未来几日以阴到多云为主，气温16~30°C，北风1-3级，无明显恶劣天气，对开店初期影响较小",
+      "risks": [
+        "人口基数有限，客源过度依赖单一小区及周边企业",
+        "交通不便、停车位少，可能降低到店率",
+        "14家餐饮门店已形成竞争，若同质化严重则引流困难"
+      ],
+      "opportunities": [
+        "无直接竞品（奶茶店数量为0），可快速占领市场",
+        "周边有学校和公司，学生和上班族是奶茶高频消费群体",
+        "餐饮聚集区易产生连带消费，可借势引流"
+      ],
+      "checklist": [
+        {
+          "id": "c1",
+          "title": "日均客流预估",
+          "aiEstimate": "基于1260人常住人口及周边公司学校，预估日均进店客流50-80人次",
+          "method": "实地蹲点记录非周末及周末各时段人流量",
+          "reference": "同地段餐饮门店日均客流参考",
+          "inputType": "number",
+          "unit": "人次/天"
+        },
+        {
+          "id": "c2",
+          "title": "租金成本调查",
+          "aiEstimate": "按县城工业区均价，50㎡月租约2000-3000元",
+          "method": "走访周边空铺或中介获取实际租金报价",
+          "reference": "相邻街道奶茶店租金数据",
+          "inputType": "number",
+          "unit": "元/月"
+        },
+        {
+          "id": "c3",
+          "title": "外卖平台覆盖范围",
+          "aiEstimate": "300m半径内居住及工作人口约1500人，外卖渗透率预估30%",
+          "method": "查询美团/饿了么历史订单热力图及配送半径",
+          "reference": "同县城其他饮品店外卖单量",
+          "inputType": "number",
+          "unit": "人"
+        },
+        {
+          "id": "c4",
+          "title": "目标人群消费力评估",
+          "aiEstimate": "县城平均奶茶客单价12-15元，日消费可接受比例约10%",
+          "method": "发放线上问卷或访谈周边公司员工、学校学生",
+          "reference": "当地统计局人均可支配收入及消费习惯报告",
+          "inputType": "number",
+          "unit": "元"
+        },
+        {
+          "id": "x1",
+          "t": "午间人流量",
+          "md": "工作日午餐计数",
+          "ref": "200-400人/h",
+          "ut": "number",
+          "un": "人"
+        },
+        {
+          "id": "x2",
+          "t": "最近竞品距离",
+          "md": "步行实测",
+          "ref": "<100m谨慎",
+          "ut": "number",
+          "un": "米"
+        }
+      ],
+      "_population": 1260,
+      "_aiHouseholds": 450
+    },
+    "fieldChecklist": [
+      {
+        "id": "c1",
+        "title": "日均客流预估",
+        "aiEstimate": "基于1260人常住人口及周边公司学校，预估日均进店客流50-80人次",
+        "method": "实地蹲点记录非周末及周末各时段人流量",
+        "reference": "同地段餐饮门店日均客流参考",
+        "inputType": "number",
+        "unit": "人次/天"
+      },
+      {
+        "id": "c2",
+        "title": "租金成本调查",
+        "aiEstimate": "按县城工业区均价，50㎡月租约2000-3000元",
+        "method": "走访周边空铺或中介获取实际租金报价",
+        "reference": "相邻街道奶茶店租金数据",
+        "inputType": "number",
+        "unit": "元/月"
+      },
+      {
+        "id": "c3",
+        "title": "外卖平台覆盖范围",
+        "aiEstimate": "300m半径内居住及工作人口约1500人，外卖渗透率预估30%",
+        "method": "查询美团/饿了么历史订单热力图及配送半径",
+        "reference": "同县城其他饮品店外卖单量",
+        "inputType": "number",
+        "unit": "人"
+      },
+      {
+        "id": "c4",
+        "title": "目标人群消费力评估",
+        "aiEstimate": "县城平均奶茶客单价12-15元，日消费可接受比例约10%",
+        "method": "发放线上问卷或访谈周边公司员工、学校学生",
+        "reference": "当地统计局人均可支配收入及消费习惯报告",
+        "inputType": "number",
+        "unit": "元"
+      }
+    ],
+    "fieldData": {},
+    "finalReport": null,
+    "chatHistory4": [],
+    "chatHistory5": [],
+    "rawData": {
+      "小区": 1,
+      "写字楼": 0,
+      "竞品": 0,
+      "地铁站": 0
+    }
   }
 ]
