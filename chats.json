@@ -133,5 +133,144 @@
       ],
       "comparisonToEstimate": "初评总体得分68，实测后上调至70。主要调整：竞品减少1家（+2分），租金信息补充（-1分），人流量验证（+1分）。整体评估从'适合经营但需注意'转为'可考虑'，建议结合外卖潜力和租金门槛做最终决定。"
     }
+  },
+  {
+    "id": "e_1778482570572_dfgo09",
+    "date": "2026-05-11T06:57:23.224Z",
+    "address": "四川省绵阳市梓潼县长卿镇文昌大道南段四川辉氏生物技术有限公司",
+    "industry": "便利店",
+    "radius": 800,
+    "status": "ai_analyzed",
+    "weatherData": {
+      "city": "梓潼县",
+      "adcode": "510725",
+      "province": "四川",
+      "reporttime": "2026-05-11 14:37:11",
+      "casts": [
+        {
+          "date": "2026-05-11",
+          "week": "1",
+          "dayweather": "阴",
+          "nightweather": "阴",
+          "daytemp": "29",
+          "nighttemp": "17",
+          "daywind": "北",
+          "nightwind": "北",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "29.0",
+          "nighttemp_float": "17.0"
+        },
+        {
+          "date": "2026-05-12",
+          "week": "2",
+          "dayweather": "阴",
+          "nightweather": "多云",
+          "daytemp": "28",
+          "nighttemp": "16",
+          "daywind": "北",
+          "nightwind": "北",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "28.0",
+          "nighttemp_float": "16.0"
+        },
+        {
+          "date": "2026-05-13",
+          "week": "3",
+          "dayweather": "多云",
+          "nightweather": "晴",
+          "daytemp": "29",
+          "nighttemp": "19",
+          "daywind": "北",
+          "nightwind": "北",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "29.0",
+          "nighttemp_float": "19.0"
+        },
+        {
+          "date": "2026-05-14",
+          "week": "4",
+          "dayweather": "多云",
+          "nightweather": "小雨",
+          "daytemp": "30",
+          "nighttemp": "18",
+          "daywind": "北",
+          "nightwind": "北",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "30.0",
+          "nighttemp_float": "18.0"
+        }
+      ]
+    },
+    "aiAnalysis": {
+      "populationEstimate": "5880人",
+      "crowdProfile": "周边有5个小区、25家公司、5所学校及71家餐饮，主要人群为企业员工、学生和居民，消费力中等，流动性较高",
+      "layer1_score": 70,
+      "layer1_analysis": "人口估算为5880人，基础客源充足（5个小区、25家公司、5所学校），但竞品有4家，竞争尚可；得分为70分",
+      "layer2_score": 70,
+      "layer2_analysis": "竞品4家，便利店竞争压力适中；但71家餐饮可能分流部分消费，需关注；得分为70分",
+      "layer3_score": 65,
+      "layer3_analysis": "周边业态以餐饮、办公、教育为主，缺乏大型商场、医院等综合配套，业态多样性一般；得分为65分",
+      "layer4_score": 60,
+      "layer4_analysis": "无公交、地铁站点，停车位仅5个（标注数量），交通便利性较差，主要依赖步行或私家车；得分为60分",
+      "overall_score": 68,
+      "overall_summary": "该位置人口基础较好，客源稳定，但交通不便、业态单一，综合评分68分，适合便利店经营但需强化社区服务和线上配送",
+      "weatherNote": "未来几日天气以阴、多云为主，温度16-30°C，局部有小雨，对日常经营影响不大，注意雨天防滑",
+      "risks": [
+        "交通不便，无公交地铁，依赖步行或开车，可能限制远距离客源",
+        "餐饮竞争激烈（71家），可能分流午间快餐类消费",
+        "停车位仅5个，顾客临时停车不便"
+      ],
+      "opportunities": [
+        "25家公司、5所学校带来稳定白领与学生客流",
+        "71家餐饮可合作开展便当、饮料等互补销售",
+        "小区5个，居民日常购物需求刚需，可发展社区团购"
+      ],
+      "checklist": [
+        {
+          "id": "c1",
+          "title": "日均客流量",
+          "aiEstimate": "根据人口5880人及周边设施，预估日均客流量约500-600人次",
+          "method": "人口估算（5880）× 0.1（保守转化率）",
+          "reference": "行业经验值（社区便利店日均约500-800人次）",
+          "inputType": "number",
+          "unit": "人次/天"
+        },
+        {
+          "id": "x1",
+          "t": "周边户数",
+          "md": "推算",
+          "ref": ">500户",
+          "ut": "number",
+          "un": "户"
+        }
+      ],
+      "_population": 5880,
+      "_aiHouseholds": 2100
+    },
+    "fieldChecklist": [
+      {
+        "id": "c1",
+        "title": "日均客流量",
+        "aiEstimate": "根据人口5880人及周边设施，预估日均客流量约500-600人次",
+        "method": "人口估算（5880）× 0.1（保守转化率）",
+        "reference": "行业经验值（社区便利店日均约500-800人次）",
+        "inputType": "number",
+        "unit": "人次/天"
+      }
+    ],
+    "fieldData": {},
+    "finalReport": null,
+    "chatHistory4": [],
+    "chatHistory5": [],
+    "rawData": {
+      "小区": 5,
+      "写字楼": 0,
+      "竞品": 4,
+      "地铁站": 0
+    }
   }
 ]
