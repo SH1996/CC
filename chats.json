@@ -282,5 +282,154 @@
       "竞品": 0,
       "地铁站": 0
     }
+  },
+  {
+    "id": "e_1778483593788_st9hoc",
+    "date": "2026-05-11T07:14:36.526Z",
+    "address": "四川省绵阳市梓潼县长卿镇文昌大道南段",
+    "industry": "包子店",
+    "radius": 1000,
+    "status": "ai_analyzed",
+    "weatherData": {
+      "city": "梓潼县",
+      "adcode": "510725",
+      "province": "四川",
+      "reporttime": "2026-05-11 15:07:03",
+      "casts": [
+        {
+          "date": "2026-05-11",
+          "week": "1",
+          "dayweather": "阴",
+          "nightweather": "阴",
+          "daytemp": "29",
+          "nighttemp": "17",
+          "daywind": "北",
+          "nightwind": "北",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "29.0",
+          "nighttemp_float": "17.0"
+        },
+        {
+          "date": "2026-05-12",
+          "week": "2",
+          "dayweather": "阴",
+          "nightweather": "多云",
+          "daytemp": "28",
+          "nighttemp": "16",
+          "daywind": "北",
+          "nightwind": "北",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "28.0",
+          "nighttemp_float": "16.0"
+        },
+        {
+          "date": "2026-05-13",
+          "week": "3",
+          "dayweather": "多云",
+          "nightweather": "晴",
+          "daytemp": "29",
+          "nighttemp": "19",
+          "daywind": "北",
+          "nightwind": "北",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "29.0",
+          "nighttemp_float": "19.0"
+        },
+        {
+          "date": "2026-05-14",
+          "week": "4",
+          "dayweather": "多云",
+          "nightweather": "小雨",
+          "daytemp": "30",
+          "nighttemp": "18",
+          "daywind": "北",
+          "nightwind": "北",
+          "daypower": "1-3",
+          "nightpower": "1-3",
+          "daytemp_float": "30.0",
+          "nighttemp_float": "18.0"
+        }
+      ]
+    },
+    "aiAnalysis": {
+      "populationEstimate": "17080人",
+      "crowdProfile": "周边小区居民、学校师生、公司职员为主，早餐刚需人群，消费能力中等偏低",
+      "layer1_score": 60,
+      "layer1_analysis": "位于文昌大道南段，主干道交通便利，但无地铁、公交站，依赖步行、电动车或私家车；停车位仅6个，对开车顾客便利性不足。",
+      "layer2_score": 70,
+      "layer2_analysis": "半径1km内预估人口约1.7万，含14个小区、5所学校、39家公司，早晚及午间有稳定人流，但乡镇消费水平有限。",
+      "layer3_score": 65,
+      "layer3_analysis": "餐饮店共102家，竞争激烈；但包子店为细分品类，统计显示竞品0家，可能未覆盖，实际需现场核实，仍有差异化空间。",
+      "layer4_score": 60,
+      "layer4_analysis": "周边配套设施一般，无大型商场、医院，但有学校、小区和公司提供基础客流；停车位少可能影响远端顾客。",
+      "overall_score": 64,
+      "overall_summary": "乡镇主干道位置，人口密度中等，早餐刚需旺盛，但竞争激烈、交通方式单一，适合低成本、高性价比的包子店切入。",
+      "weatherNote": "近期梓潼县天气以阴天为主（5月11-14日），最高温28-30℃，夜间低温16-19℃，无极端天气，适合开业运营。",
+      "risks": [
+        "竞争风险：周边102家餐饮店，需突出包子品类特色，避免同质化",
+        "客流波动：学校寒暑假期间学生客流减少，需依赖小区和公司客源",
+        "交通限制：无公交地铁，停车位少，难以吸引远距离顾客"
+      ],
+      "opportunities": [
+        "早餐刚需：学校、小区、公司集中，早餐时段客源充足",
+        "竞品空白：统计显示无包子店竞品，可抢占品类先机",
+        "成本优势：乡镇租金和人工成本相对城市低，利润空间较好"
+      ],
+      "checklist": [
+        {
+          "id": "c1",
+          "title": "早高峰人流实测",
+          "aiEstimate": "预计早7:30-8:30路过人数约500-800人",
+          "method": "连续3天在店门口分时段计数行人及车辆流量",
+          "reference": "相似乡镇包子店早高峰人流统计（行业均值）",
+          "inputType": "number",
+          "unit": "人/小时"
+        },
+        {
+          "id": "c2",
+          "title": "周边竞品实地确认",
+          "aiEstimate": "实际竞品可能1-3家",
+          "method": "沿文昌大道南段步行1公里，记录所有包子、馒头、早餐店",
+          "reference": "基于统计中餐饮店102家、竞品0家的矛盾，需现场核实",
+          "inputType": "number",
+          "unit": "家"
+        }
+      ],
+      "_population": 17080,
+      "_aiHouseholds": 6100
+    },
+    "fieldChecklist": [
+      {
+        "id": "c1",
+        "title": "早高峰人流实测",
+        "aiEstimate": "预计早7:30-8:30路过人数约500-800人",
+        "method": "连续3天在店门口分时段计数行人及车辆流量",
+        "reference": "相似乡镇包子店早高峰人流统计（行业均值）",
+        "inputType": "number",
+        "unit": "人/小时"
+      },
+      {
+        "id": "c2",
+        "title": "周边竞品实地确认",
+        "aiEstimate": "实际竞品可能1-3家",
+        "method": "沿文昌大道南段步行1公里，记录所有包子、馒头、早餐店",
+        "reference": "基于统计中餐饮店102家、竞品0家的矛盾，需现场核实",
+        "inputType": "number",
+        "unit": "家"
+      }
+    ],
+    "fieldData": {},
+    "finalReport": null,
+    "chatHistory4": [],
+    "chatHistory5": [],
+    "rawData": {
+      "小区": 14,
+      "写字楼": 0,
+      "竞品": 0,
+      "地铁站": 0
+    }
   }
 ]
