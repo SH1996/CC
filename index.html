@@ -1,0 +1,675 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>商铺选址分析 V24</title>
+    <style>
+        :root {
+            --bg: #f5f6f8; --surface: #ffffff; --border: #e5e7eb; --border-light: #f3f4f6;
+            --primary: #2563eb; --primary-light: #eff6ff; --primary-soft: #dbeafe;
+            --success: #059669; --success-light: #ecfdf5; --warning: #d97706;
+            --warning-light: #fffbeb; --danger: #dc2626; --danger-light: #fef2f2;
+            --text: #111827; --text-secondary: #6b7280; --text-muted: #9ca3af;
+            --shadow: 0 1px 2px rgba(0,0,0,0.05); --radius: 12px; --radius-sm: 8px;
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{
+            font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;
+            background:var(--bg);color:var(--text);height:100vh;height:100dvh;display:flex;flex-direction:column;
+            overflow:hidden;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased;
+        }
+        .header{
+            background:var(--surface);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;
+            border-bottom:1px solid var(--border);flex-shrink:0;z-index:10;box-shadow:var(--shadow);
+        }
+        .header-title{font-size:16px;font-weight:700;white-space:nowrap;}
+        .header-actions{display:flex;gap:4px;align-items:center;flex-wrap:wrap;}
+        .btn{
+            padding:7px 12px;border-radius:18px;border:none;font-size:12px;font-weight:600;cursor:pointer;
+            transition:all 0.15s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;
+            background:transparent;color:var(--text-secondary);
+        }
+        .btn:active{transform:scale(0.96);}
+        .btn-primary{background:var(--primary);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,0.3);}
+        .btn-outline{border:1.5px solid var(--border);background:var(--surface);}
+        .btn-ghost{background:transparent;}
+        .btn-sm{padding:5px 10px;font-size:11px;border-radius:14px;}
+        .btn-xs{padding:3px 8px;font-size:10px;border-radius:10px;}
+        .btn-block{width:100%;justify-content:center;padding:12px;}
+        .btn:disabled{opacity:0.5;pointer-events:none;}
+        .btn-locate{background:var(--success);color:#fff;padding:8px 10px;border-radius:8px;font-size:11px;white-space:nowrap;flex-shrink:0;border:none;cursor:pointer;}
+
+        .steps-bar{display:flex;align-items:center;justify-content:center;gap:0;padding:8px 10px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;}
+        .step-group{display:flex;flex-direction:column;align-items:center;flex-shrink:0;}
+        .step-dot{width:24px;height:24px;border-radius:50%;background:var(--border-light);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--text-muted);transition:all 0.3s;}
+        .step-dot.active{background:var(--primary);color:#fff;animation:pulse 1.5s infinite;}
+        .step-dot.done{background:var(--success);color:#fff;}
+        @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(37,99,235,0.4);}50%{box-shadow:0 0 0 8px rgba(37,99,235,0);}}
+        .step-line{flex:1;height:2px;min-width:10px;background:var(--border-light);border-radius:1px;transition:background 0.4s;margin:0 2px;margin-bottom:16px;}
+        .step-line.done{background:var(--success);}
+        .step-label{font-size:8px;color:var(--text-muted);margin-top:2px;text-align:center;min-width:38px;}
+        .step-label.active{color:var(--primary);font-weight:600;}
+
+        .main-content{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:10px;-webkit-overflow-scrolling:touch;}
+        .main-content::-webkit-scrollbar{width:3px;}.main-content::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
+
+        .card{background:var(--surface);border-radius:var(--radius);padding:14px;box-shadow:var(--shadow);border:1px solid var(--border-light);animation:slideUp 0.3s ease-out;}
+        @keyframes slideUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+        .card-title{font-size:14px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+
+        .form-group{margin-bottom:10px;}
+        .form-label{display:block;font-size:12px;font-weight:600;margin-bottom:4px;}
+        .form-sublabel{font-size:10px;color:var(--text-muted);font-weight:400;}
+        .form-input{width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:inherit;background:var(--surface);color:var(--text);outline:none;}
+        .form-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,0.1);}
+        .input-with-btn{display:flex;gap:6px;align-items:flex-end;}
+        .input-with-btn .form-input{flex:1;}
+
+        .radius-selector{display:flex;gap:5px;flex-wrap:wrap;}
+        .radius-opt{padding:8px 14px;border:1.5px solid var(--border);border-radius:18px;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.15s;background:var(--surface);color:var(--text-secondary);user-select:none;}
+        .radius-opt.selected{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:0 2px 8px rgba(37,99,235,0.25);}
+        .radius-opt:active{transform:scale(0.95);}
+        .radius-tip{margin-top:6px;padding:6px 10px;background:#fffbeb;border-radius:6px;font-size:10px;color:#d97706;line-height:1.4;}
+
+        .weather-card{background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border-radius:var(--radius);padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:10px;font-size:12px;}
+        .weather-card .temp{font-size:28px;font-weight:700;color:#2e7d32;}
+
+        .poi-table-wrap{max-height:220px;overflow-y:auto;margin-top:4px;border:1px solid var(--border-light);border-radius:var(--radius-sm);}
+        .poi-table{width:100%;border-collapse:collapse;font-size:10px;}
+        .poi-table th{background:var(--bg);padding:6px 5px;text-align:left;font-weight:600;color:var(--text-secondary);position:sticky;top:0;border-bottom:2px solid var(--border);}
+        .poi-table td{padding:5px;border-bottom:1px solid var(--border-light);}
+        .poi-dist{font-weight:600;color:var(--primary);white-space:nowrap;}
+
+        .section-toggle{display:flex;align-items:center;gap:5px;cursor:pointer;user-select:none;padding:5px 0;font-size:11px;font-weight:600;color:var(--primary);}
+        .section-toggle .arrow{transition:transform 0.25s;font-size:8px;}
+        .section-toggle.expanded .arrow{transform:rotate(90deg);}
+        .section-content{display:none;}.section-content.show{display:block;}
+
+        .ai-block{border-radius:var(--radius-sm);padding:9px 12px;margin:6px 0;font-size:12px;line-height:1.6;border-left:3px solid var(--primary);background:linear-gradient(135deg,#f0f9ff,#eff6ff);}
+        .ai-block.warning{border-left-color:var(--warning);background:linear-gradient(135deg,#fffbeb,#fef3c7);}
+        .ai-block.success{border-left-color:var(--success);background:linear-gradient(135deg,#ecfdf5,#d1fae5);}
+        .ai-block.danger{border-left-color:var(--danger);background:linear-gradient(135deg,#fef2f2,#fee2e2);}
+
+        .checklist-item{border:1.5px solid var(--border);border-radius:var(--radius);padding:10px;margin-bottom:8px;}
+        .checklist-item.answered{border-color:var(--primary);background:var(--primary-light);}
+        .checklist-q{font-size:11px;font-weight:600;margin-bottom:6px;line-height:1.4;}
+        .checklist-options{display:flex;flex-direction:column;gap:5px;}
+        .checklist-options label{display:flex;align-items:center;gap:6px;font-size:10px;padding:6px 10px;border:1px solid var(--border);border-radius:6px;cursor:pointer;background:var(--surface);}
+        .checklist-options label:hover{background:var(--primary-light);}
+        .checklist-options input[type="radio"]{accent-color:var(--primary);}
+        .checklist-note{font-size:9px;color:var(--text-muted);margin-top:5px;padding:5px 8px;background:var(--bg);border-radius:4px;}
+
+        .summary-card{background:linear-gradient(135deg,#1e40af,#1d4ed8);color:#fff;border-radius:var(--radius);padding:16px;margin-bottom:10px;}
+        .summary-score{font-size:36px;font-weight:800;line-height:1;}
+        .summary-label{font-size:10px;opacity:0.8;}
+        .summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px;}
+        .summary-item{background:rgba(255,255,255,0.15);border-radius:var(--radius-sm);padding:7px;}
+        .summary-item-label{font-size:9px;opacity:0.7;}.summary-item-value{font-size:14px;font-weight:700;margin-top:1px;}
+
+        .chat-panel{border:1.5px solid var(--primary-soft);border-radius:var(--radius);overflow:hidden;margin-top:5px;}
+        .chat-header-bar{background:var(--primary-light);padding:6px 8px;font-weight:700;font-size:11px;color:var(--primary);cursor:pointer;}
+        .chat-body{display:none;flex-direction:column;max-height:250px;}
+        .chat-body.show{display:flex;}
+        .chat-messages{flex:1;overflow-y:auto;padding:5px;display:flex;flex-direction:column;gap:4px;max-height:160px;}
+        .chat-msg{max-width:88%;padding:5px 7px;border-radius:10px;font-size:9px;line-height:1.4;}
+        .chat-msg.user{align-self:flex-end;background:#eff6ff;border-bottom-right-radius:3px;}
+        .chat-msg.ai{align-self:flex-start;background:#f9fafb;border:1px solid var(--border-light);border-bottom-left-radius:3px;}
+        .chat-input-row{display:flex;gap:3px;padding:5px 6px;border-top:1px solid var(--border-light);}
+        .chat-input-row input{flex:1;padding:5px 7px;border:1px solid var(--border);border-radius:12px;font-size:9px;outline:none;}
+        .chat-send-btn{width:24px;height:24px;border-radius:50%;border:none;background:var(--primary);color:#fff;font-size:11px;cursor:pointer;}
+
+        .history-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px;margin-bottom:6px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;}
+        .toast{position:fixed;top:65px;left:50%;transform:translateX(-50%);background:#1f2937;color:#fff;padding:9px 18px;border-radius:18px;font-size:12px;z-index:200;opacity:0;transition:all 0.3s;pointer-events:none;}
+        .toast.show{opacity:1;transform:translateX(-50%) translateY(3px);}
+        .empty-state{text-align:center;padding:30px 16px;color:var(--text-muted);}
+        .spinner{width:18px;height:18px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 0.8s linear infinite;}
+        @keyframes spin{to{transform:rotate(360deg);}}
+        .spinner-wrap{display:flex;align-items:center;gap:6px;padding:14px;color:var(--text-secondary);font-size:13px;}
+
+        .query-panel{position:fixed;top:0;right:-100%;width:100%;max-width:420px;height:100%;height:100dvh;background:var(--surface);z-index:150;transition:right 0.35s;box-shadow:-4px 0 30px rgba(0,0,0,0.15);display:flex;flex-direction:column;border-left:2px solid var(--border);}
+        .query-panel.open{right:0;}
+        .query-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.3);backdrop-filter:blur(2px);z-index:149;opacity:0;pointer-events:none;transition:opacity 0.35s;}
+        .query-overlay.active{opacity:1;pointer-events:auto;}
+        .query-header{padding:16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-weight:700;}
+        .query-list{flex:1;overflow-y:auto;padding:12px;}
+        .query-item{background:var(--bg);border:1px solid var(--border-light);border-radius:14px;padding:12px;margin-bottom:10px;font-size:13px;}
+        .query-item .q-actions{display:flex;gap:4px;margin-top:6px;}
+        .query-item .q-actions button{font-size:9px;padding:3px 8px;border-radius:8px;border:1px solid var(--border);background:var(--surface);cursor:pointer;}
+
+        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:300;display:flex;align-items:center;justify-content:center;}
+        .modal-box{background:var(--surface);border-radius:12px;padding:14px;width:90%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+        .modal-box h3{font-size:14px;margin-bottom:6px;}
+        .modal-box input{width:100%;padding:8px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;outline:none;margin-bottom:5px;}
+        .modal-btns{display:flex;gap:5px;justify-content:flex-end;}
+        .modal-btns button{padding:5px 12px;border-radius:12px;border:none;font-size:11px;font-weight:600;cursor:pointer;}
+        .modal-btns .btn-cancel{background:var(--bg);}
+        .modal-btns .btn-ok{background:var(--primary);color:#fff;}
+        .modal-btns .btn-danger{background:var(--danger);color:#fff;}
+
+        #mapContainer{width:100%;height:300px;border-radius:8px;overflow:hidden;border:2px solid var(--border);margin:6px 0;position:relative;}
+        .map-legend-overlay{position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.82);color:#fff;padding:7px 9px;border-radius:7px;font-size:9px;z-index:10;display:flex;flex-direction:column;gap:2px;pointer-events:none;max-width:78%;}
+        .map-legend-overlay span{display:flex;align-items:center;gap:4px;white-space:nowrap;}
+        .map-legend-overlay .ldot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+        .flow-meter{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--bg);border-radius:6px;margin:4px 0;}
+        .flow-bar-outer{flex:1;height:10px;background:#e5e7eb;border-radius:5px;overflow:hidden;}
+        .flow-bar-inner{height:100%;border-radius:5px;transition:width 0.5s;}
+        .flow-label{font-weight:700;font-size:14px;min-width:40px;text-align:center;}
+        .density-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:5px 0;}
+        .density-item{background:var(--bg);padding:6px;border-radius:6px;text-align:center;}
+        .density-item .val{font-size:16px;font-weight:700;}
+        .density-item .lbl{font-size:8px;color:var(--text-muted);}
+        .mini-table{width:100%;border-collapse:collapse;font-size:9px;margin:4px 0;}
+        .mini-table th{background:var(--bg);padding:3px;text-align:left;font-weight:600;}
+        .mini-table td{padding:3px;border-bottom:1px solid var(--border-light);}
+
+        .tag{margin:1px;padding:2px 6px;border-radius:4px;font-size:9px;display:inline-block;background:var(--primary-light);color:var(--primary);}
+
+        .checklist-entry-card{background:linear-gradient(135deg,#1e40af,#1d4ed8);color:#fff;border-radius:var(--radius);padding:16px;margin:10px 0;text-align:center;}
+        .checklist-entry-card .title{font-size:15px;font-weight:700;margin-bottom:5px;}
+        .checklist-entry-card .sub{font-size:10px;opacity:0.85;margin-bottom:10px;}
+        .btn-checklist{background:#fff;color:var(--primary);padding:12px;border-radius:var(--radius);font-size:14px;font-weight:700;width:100%;border:none;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.2);}
+
+        .key-link{font-size:10px;color:var(--primary);text-decoration:underline;cursor:pointer;font-weight:600;}
+        .custom-radius{font-size:10px;color:var(--primary);text-decoration:underline;cursor:pointer;font-weight:600;}
+
+        .wait-tip{background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 12px;margin-top:8px;font-size:10px;color:#92400e;text-align:center;line-height:1.5;}
+
+        @media(max-width:380px){.header-title{font-size:14px;}.card{padding:10px;}.summary-score{font-size:28px;}.query-panel{max-width:100%;}}
+    </style>
+</head>
+<body>
+    <div class="toast" id="toast"></div>
+    <div class="query-overlay" id="queryOverlay"></div>
+    <div class="query-panel" id="queryPanel">
+        <div class="query-header"><span>📋 云端记录</span><button class="query-close-btn" id="queryCloseBtn" onclick="App.closeQueryPanel()">✕</button></div>
+        <div style="padding:6px 10px;display:flex;gap:4px;border-bottom:1px solid var(--border-light);">
+            <button class="btn btn-ghost btn-xs" id="btnDeleteAllCloud">🗑全部删除</button>
+            <span style="font-size:8px;color:var(--text-muted);margin-left:auto;">📥导入</span>
+        </div>
+        <div id="queryContent" style="flex:1;overflow-y:auto;padding:8px;"></div>
+    </div>
+    <div id="modalContainer"></div>
+
+    <div class="header">
+        <div class="header-title">📍 商铺选址分析</div>
+        <div class="header-actions">
+            <button class="btn btn-ghost btn-sm" onclick="App.showHistory()">📂 历史</button>
+            <button class="btn btn-ghost btn-sm" onclick="App.openQueryPanel()">🔍 云端</button>
+            <button class="btn btn-ghost btn-sm" onclick="App.startNew()">🆕 新建</button>
+        </div>
+    </div>
+    <div class="steps-bar" id="stepsBar">
+        <div class="step-group"><div class="step-dot" id="stepDot1">1</div><div class="step-label" id="stepLabel1">输入</div></div>
+        <div class="step-line" id="stepLine1"></div>
+        <div class="step-group"><div class="step-dot" id="stepDot2">2</div><div class="step-label" id="stepLabel2">采集</div></div>
+        <div class="step-line" id="stepLine2"></div>
+        <div class="step-group"><div class="step-dot" id="stepDot3">3</div><div class="step-label" id="stepLabel3">初步报告</div></div>
+        <div class="step-line" id="stepLine3"></div>
+        <div class="step-group"><div class="step-dot" id="stepDot4">4</div><div class="step-label" id="stepLabel4">实地清单</div></div>
+        <div class="step-line" id="stepLine4"></div>
+        <div class="step-group"><div class="step-dot" id="stepDot5">5</div><div class="step-label" id="stepLabel5">最终报告</div></div>
+    </div>
+    <div class="main-content" id="mainContent"></div>
+
+<script>
+window.App = (function(){
+    var _k1='sk-079eb73',_k2='ca6b944f6a3ee',_k3='479c2cacff51';
+    var DS_KEY=_k1+_k2+_k3,DS_URL='https://api.deepseek.com/v1/chat/completions',DS_MODEL='deepseek-v4-flash';
+    var QUERY_PASSWORD='jinxi2026';
+
+    function getAk(){return localStorage.getItem('_ak24')||'';}
+    function setAk(k){localStorage.setItem('_ak24',k);}
+    function getGt(){return localStorage.getItem('_gt24')||'';}
+    function setGt(t){localStorage.setItem('_gt24',t);}
+    function hasGt(){return !!getGt();}
+    function getGhCfg(){return{token:getGt(),owner:'SH1996',repo:'CC',file:'chats.json',api:function(){return'https://api.github.com/repos/'+this.owner+'/'+this.repo+'/contents/'+this.file;}};}
+
+    function safeBtoa(str){try{var e=new TextEncoder();var b=e.encode(str);var bin='';for(var i=0;i<b.length;i++)bin+=String.fromCharCode(b[i]);return btoa(bin);}catch(e){return btoa(unescape(encodeURIComponent(str)));}}
+    function safeAtob(b64){try{var bin=atob(b64);var b=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)b[i]=bin.charCodeAt(i);return new TextDecoder().decode(b);}catch(e){return decodeURIComponent(escape(atob(b64)));}}
+
+    var currentEval=null,step4Chat=[],step5Chat=[],selectedRadius=1000,toastTimer=null;
+    var weatherData=null,compareList=[],mapObj=null;
+    var $m=document.getElementById('mainContent'),$t=document.getElementById('toast');
+    var $qPanel=document.getElementById('queryPanel'),$qOverlay=document.getElementById('queryOverlay');
+
+    function toast(m){clearTimeout(toastTimer);$t.textContent=m;$t.classList.add('show');toastTimer=setTimeout(function(){$t.classList.remove('show');},2500);}
+    function sleep(ms){return new Promise(function(r){setTimeout(r,ms);});}
+    function genId(){return'e_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);}
+    function esc(s){if(!s)return'';var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+    function fmtDist(m){if(!m&&m!==0)return'?';m=parseInt(m);return m<1000?m+'m':(m/1000).toFixed(1)+'km';}
+    function updateSteps(s){for(var i=1;i<=5;i++){var d=document.getElementById('stepDot'+i),l=document.getElementById('stepLabel'+i),ln=document.getElementById('stepLine'+i);if(!d)continue;d.classList.remove('active','done');if(l)l.classList.remove('active');if(ln)ln.classList.remove('done');if(i<s){d.classList.add('done');if(ln)ln.classList.add('done');}else if(i===s){d.classList.add('active');if(l)l.classList.add('active');}}}
+    function render(h){$m.innerHTML=h;$m.scrollTop=0;}
+
+    async function callDS(msgs,temp,mt){temp=temp||0.7;mt=mt||2000;var r=await fetch(DS_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+DS_KEY},body:JSON.stringify({model:DS_MODEL,messages:msgs,temperature:temp,max_tokens:mt,stream:false})});if(!r.ok)throw new Error('API '+r.status);var d=await r.json();return d.choices[0].message.content;}
+
+    async function amapGeocode(addr){var k=getAk();if(!k)throw new Error('请先配置密钥');var u='https://restapi.amap.com/v3/geocode/geo?key='+encodeURIComponent(k)+'&address='+encodeURIComponent(addr);var r=await fetch(u);var d=await r.json();if(d.status==='1'&&d.geocodes&&d.geocodes.length>0){var l=d.geocodes[0].location.split(',');return{lng:parseFloat(l[0]),lat:parseFloat(l[1]),fmt:d.geocodes[0].formatted_address||addr};}throw new Error('地址解析失败');}
+    async function amapRegeo(lng,lat){var k=getAk();if(!k)throw new Error('NO_KEY');var u='https://restapi.amap.com/v3/geocode/regeo?key='+encodeURIComponent(k)+'&location='+lng+','+lat;var r=await fetch(u);var d=await r.json();if(d.status==='1'&&d.regeocode)return d.regeocode.formatted_address;throw new Error('逆地理失败');}
+    async function amapWeather(city){var k=getAk();if(!k)throw new Error('NO_KEY');var u='https://restapi.amap.com/v3/weather/weatherInfo?key='+encodeURIComponent(k)+'&city='+encodeURIComponent(city)+'&extensions=all';var r=await fetch(u);var d=await r.json();if(d.status==='1'&&d.forecasts&&d.forecasts.length>0)return d.forecasts[0];throw new Error('天气失败');}
+    async function amapPOISearch(loc,kw,rad,types){rad=rad||3000;var k=getAk();if(!k)throw new Error('NO_KEY');var all=[],seen=new Set();for(var p=1;p<=5;p++){var u='https://restapi.amap.com/v3/place/around?key='+encodeURIComponent(k)+'&location='+loc+'&radius='+rad+'&offset=25&page='+p;if(types)u+='&types='+types;if(kw)u+='&keywords='+encodeURIComponent(kw);var r=await fetch(u);var d=await r.json();if(d.status==='1'&&d.pois&&d.pois.length>0){for(var i=0;i<d.pois.length;i++){if(!seen.has(d.pois[i].id)){seen.add(d.pois[i].id);all.push(d.pois[i]);}}if(d.pois.length<25)break;}else break;await sleep(150);}return all;}
+    async function searchSchools(loc,rad){var all=[],seen=new Set();var kw=['学校','大学','中学','小学','幼儿园'];for(var i=0;i<kw.length;i++){try{var r=await amapPOISearch(loc,kw[i],rad,'141200|141300|141400');for(var j=0;j<r.length;j++){if(!seen.has(r[j].id)){seen.add(r[j].id);all.push(r[j]);}}}catch(e){}await sleep(100);}all.sort(function(a,b){return(parseInt(a.distance)||99999)-(parseInt(b.distance)||99999);});return all;}
+
+    function getCityLevel(addr){
+        if(!addr)return{level:'地级市',factor:1.0};
+        if(/北京|上海|广州|深圳/.test(addr))return{level:'一线城市',factor:1.8};
+        if(/成都|杭州|武汉|南京|重庆|天津|苏州|西安|长沙|郑州|东莞|青岛|沈阳|宁波|昆明|合肥|佛山|无锡|厦门|济南|福州|温州|大连|哈尔滨|长春|泉州|石家庄|贵阳|南昌|南宁|太原|烟台|嘉兴|南通|金华|珠海|惠州|徐州|海口|乌鲁木齐|兰州|呼和浩特|银川|西宁|拉萨/.test(addr))return{level:'省会/新一线',factor:1.4};
+        if(/县/.test(addr)&&!/市/.test(addr))return{level:'县城',factor:0.6};
+        if(/镇|乡|村/.test(addr))return{level:'乡镇',factor:0.4};
+        return{level:'地级市',factor:1.0};
+    }
+
+    var industryTemplates={
+        '奶茶店':{r:500,m:['学生','竞品数'],ex:[{id:'x1',t:'午间人流量',o:['<100人/h','100-200','200-300','300-500','>500']},{id:'x2',t:'最近竞品距离',o:['<50m','50-100m','100-200m','>200m']}]},
+        '火锅店':{r:2000,m:['停车位','家庭客群'],ex:[{id:'x1',t:'停车位数',o:['<10个','10-30','30-50','>50']},{id:'x2',t:'可用面积',o:['<100㎡','100-200㎡','200-400㎡','>400㎡']}]},
+        '便利店':{r:300,m:['小区户数'],ex:[{id:'x1',t:'周边户数',o:['<300户','300-500','500-1000','>1000']}]},
+        '咖啡店':{r:800,m:['白领人数'],ex:[{id:'x1',t:'写字楼人数',o:['<1000人','1000-2000','2000-5000','>5000']}]},
+        '快餐店':{r:1000,m:['午间人流'],ex:[{id:'x1',t:'午间1h人流',o:['<100人','100-200','200-300','300-500','>500']}]},
+        '烘焙店':{r:800,m:['学生数'],ex:[{id:'x1',t:'学生总数',o:['<500','500-1000','1000-2000','>2000']}]},
+        '药店':{r:500,m:['老龄人口'],ex:[{id:'x1',t:'入住率',o:['<50%','50%-70%','70%-90%','>90%']}]},
+        '健身房':{r:2000,m:['年轻客群'],ex:[{id:'x1',t:'年轻人口',o:['<3000','3000-5000','5000-10000','>10000']}]}
+    };
+    function detectTpl(ind){ind=(ind||'').toLowerCase();for(var k in industryTemplates){if(ind.includes(k))return industryTemplates[k];}return null;}
+    var amapTypes={'住宅小区':'120300','写字楼':'120200','公司企业':'170000','学校':'141200|141300|141400','医院':'090100|090200','商场':'060100|060200','地铁站':'150500','公交站':'150600','停车场':'150900','餐饮':'050000','竞品':''};
+    function createEmpty(){return{id:'',address:'',industry:'',radius:3000,coordinates:null,rawData:{},weatherData:null,aiAnalysis:{},fieldChecklist:[],fieldData:{},finalReport:null,chatHistory4:[],chatHistory5:[],status:'draft',createdAt:'',updatedAt:'',deepChecklist:null,cityLevel:null};}
+
+    function getLocalEvals(){try{return JSON.parse(localStorage.getItem('_ev24')||'[]');}catch(e){return[];}}
+    function saveLocalEvals(evals){if(evals.length>100)evals=evals.slice(-100);localStorage.setItem('_ev24',JSON.stringify(evals));}
+    async function saveCurrent(){currentEval.updatedAt=new Date().toISOString();currentEval.chatHistory4=JSON.parse(JSON.stringify(step4Chat));currentEval.chatHistory5=JSON.parse(JSON.stringify(step5Chat));currentEval.weatherData=weatherData;var evals=getLocalEvals();var idx=-1;for(var i=0;i<evals.length;i++){if(evals[i].id===currentEval.id){idx=i;break;}}if(idx>=0)evals[idx]=JSON.parse(JSON.stringify(currentEval));else evals.push(JSON.parse(JSON.stringify(currentEval)));saveLocalEvals(evals);}
+
+    async function getChatJson(){if(!hasGt())return[];try{var cfg=getGhCfg();var r=await fetch(cfg.api(),{headers:{'Authorization':'token '+cfg.token,'Accept':'application/vnd.github.v3+json'}});if(r.status===404)return[];if(!r.ok)return[];var d=await r.json();if(!d.content)return[];return JSON.parse(safeAtob(d.content));}catch(e){return[];}}
+    async function saveChatJson(records){if(!hasGt())return false;try{var cfg=getGhCfg();var json=JSON.stringify(records,null,2);var content=safeBtoa(json);var sha=null;try{var ck=await fetch(cfg.api(),{headers:{'Authorization':'token '+cfg.token}});if(ck.ok){var cd=await ck.json();sha=cd.sha;}}catch(e){}var body={message:'update',content:content,branch:'main'};if(sha)body.sha=sha;var r=await fetch(cfg.api(),{method:'PUT',headers:{'Authorization':'token '+cfg.token,'Content-Type':'application/json'},body:JSON.stringify(body)});return r.ok;}catch(e){return false;}}
+    async function saveToCloud(){if(!hasGt())return;try{var records=await getChatJson();var record={id:currentEval.id,date:new Date().toISOString(),address:currentEval.address,industry:currentEval.industry,radius:currentEval.radius,status:currentEval.status,aiAnalysis:currentEval.aiAnalysis,deepChecklist:currentEval.deepChecklist,fieldData:currentEval.fieldData,finalReport:currentEval.finalReport,rawData:currentEval.rawData,chatHistory4:step4Chat,chatHistory5:step5Chat};var idx=-1;for(var i=0;i<records.length;i++){if(records[i].id===currentEval.id){idx=i;break;}}if(idx>=0)records[idx]=record;else records.push(record);if(records.length>200)records.splice(0,records.length-200);await saveChatJson(records);}catch(e){}}
+
+    function showModal(title,placeholder,hint,isPw,cb){
+        var mc=document.getElementById('modalContainer');
+        mc.innerHTML='<div class="modal-overlay" id="mo"><div class="modal-box"><h3>'+esc(title)+'</h3>'+(hint?'<div class="hint" style="font-size:10px;color:var(--text-muted);margin-bottom:6px;">'+hint+'</div>':'')+'<input type="'+(isPw?'password':'text')+'" id="mi" placeholder="'+(placeholder||'')+'"><div class="modal-btns"><button class="btn-cancel" id="mc">取消</button><button class="btn-ok" id="mok">确定</button></div></div></div>';
+        document.getElementById('mok').addEventListener('click',function(){var v=document.getElementById('mi').value.trim();mc.innerHTML='';if(cb)cb(v);});
+        document.getElementById('mc').addEventListener('click',function(){mc.innerHTML='';if(cb)cb(null);});
+        document.getElementById('mo').addEventListener('click',function(e){if(e.target===this){mc.innerHTML='';if(cb)cb(null);}});
+        setTimeout(function(){document.getElementById('mi').focus();},300);
+    }
+    function showConfirm(title,msg,cb){
+        var mc=document.getElementById('modalContainer');
+        mc.innerHTML='<div class="modal-overlay" id="mo"><div class="modal-box"><h3>'+esc(title)+'</h3><p style="font-size:11px;margin-bottom:6px;">'+esc(msg)+'</p><div class="modal-btns"><button class="btn-cancel" id="mc">取消</button><button class="btn-danger" id="mok">确认</button></div></div></div>';
+        document.getElementById('mok').addEventListener('click',function(){mc.innerHTML='';if(cb)cb(true);});
+        document.getElementById('mc').addEventListener('click',function(){mc.innerHTML='';if(cb)cb(false);});
+        document.getElementById('mo').addEventListener('click',function(e){if(e.target===this){mc.innerHTML='';if(cb)cb(false);}});
+    }
+
+    function showKeyModal(){
+        var ak=getAk(),gt=getGt();
+        showModal('密钥配置','粘贴配置命令','格式: AK:密钥,GT:GitHubToken\nAK:'+(ak?'✅已配':'❌未配')+' GT:'+(gt?'✅已配':'❌未配'),false,function(val){
+            if(!val)return;
+            var parts=val.split(/[,，\n]+/);
+            for(var i=0;i<parts.length;i++){
+                var p=parts[i].trim(),am=p.match(/AK\s*[:：]\s*(.+)/i),gm=p.match(/GT\s*[:：]\s*(.+)/i);
+                if(am)setAk(am[1].trim());
+                if(gm)setGt(gm[1].trim());
+            }
+            if(!getAk()&&val.length>20&&!val.includes(':'))setAk(val.trim());
+            toast('✅ 密钥已更新');
+            renderStep1();
+        });
+    }
+
+    function showCustomRadius(){
+        showModal('自定义半径','输入半径（米）','请输入50-10000之间的数字',false,function(val){
+            if(!val)return;
+            var r=parseInt(val);
+            if(isNaN(r)||r<50||r>10000){toast('请输入50-10000之间的数字');return;}
+            selectedRadius=r;
+            toast('✅ 半径已设为'+r+'m');
+            renderStep1();
+        });
+    }
+
+    function refreshView(){
+        if(currentEval&&currentEval.status==='final')renderStep5();
+        else if(currentEval&&currentEval.status==='deep_checklist')renderDeepChecklist();
+        else if(currentEval&&currentEval.status==='ai_analyzed')renderStep4();
+        else if(currentEval&&currentEval.status==='data_collected'){updateSteps(3);renderStep3Loading();}
+        else renderStep1();
+    }
+
+    function openQueryPanel(){if(!hasGt()){toast('请先配置GT');return;}showModal('查询密码','输入密码','',true,function(pw){if(pw===QUERY_PASSWORD){$qPanel.classList.add('open');$qOverlay.classList.add('active');loadCloudRecords();}else if(pw!==null){toast('密码错误');}});}
+    function closeQueryPanel(){$qPanel.classList.remove('open');$qOverlay.classList.remove('active');}
+    async function loadCloudRecords(){
+        var c=document.getElementById('queryContent');c.innerHTML='<div style="padding:15px;text-align:center;font-size:11px;">加载中...</div>';
+        try{var records=await getChatJson();if(!records.length){c.innerHTML='<div style="padding:20px;text-align:center;font-size:10px;color:var(--text-muted);">暂无云端记录</div>';return;}var html='<div class="query-list">';var rev=records.slice().reverse();for(var i=0;i<rev.length;i++){var r=rev[i],idx=records.length-1-i,date=r.date?new Date(r.date).toLocaleString('zh-CN'):'',addr=(r.address||'').slice(0,30),ind=r.industry||'',score=r.finalReport?r.finalReport.finalScore:(r.aiAnalysis?r.aiAnalysis.overall_score:'--'),status=r.status==='final'?'✅':'⏳';html+='<div class="query-item"><div style="display:flex;justify-content:space-between;"><span><b>📍'+esc(addr)+'</b></span><span>'+esc(ind)+'·'+status+'·'+score+'分</span></div><div class="q-actions"><button class="btn-import" data-import="'+idx+'">📥导入</button><button class="btn-del" data-delete="'+idx+'" style="color:var(--danger);">🗑删除</button></div></div>';}html+='</div>';c.innerHTML=html;
+        c.addEventListener('click',async function(e){
+            var target=e.target;
+            if(target.classList.contains('btn-import')){
+                e.stopPropagation();
+                var idx=parseInt(target.getAttribute('data-import'));
+                var records=await getChatJson();
+                if(idx>=0&&idx<records.length){
+                    importFromCloud(records[idx]);
+                    closeQueryPanel();
+                }
+            }else if(target.classList.contains('btn-del')){
+                e.stopPropagation();
+                var idx=parseInt(target.getAttribute('data-delete'));
+                showConfirm('删除','确定删除？',async function(ok){
+                    if(ok){
+                        var records=await getChatJson();
+                        if(idx>=0&&idx<records.length){
+                            records.splice(idx,1);
+                            await saveChatJson(records);
+                            toast('✅已删除');
+                            loadCloudRecords();
+                        }
+                    }
+                });
+            }
+        });}catch(e){c.innerHTML='<div style="padding:15px;text-align:center;color:var(--danger);">加载失败</div>';}}
+    function importFromCloud(cr){var imp=createEmpty();imp.id=cr.id||genId();imp.address=cr.address||'';imp.industry=cr.industry||'';imp.radius=cr.radius||3000;imp.status=cr.status||'draft';imp.createdAt=cr.date||new Date().toISOString();imp.weatherData=cr.weatherData||null;imp.aiAnalysis=cr.aiAnalysis||{};imp.deepChecklist=cr.deepChecklist||[];imp.rawData=cr.rawData||{};imp.fieldData=cr.fieldData||{};imp.finalReport=cr.finalReport||null;imp.chatHistory4=cr.chatHistory4||[];imp.chatHistory5=cr.chatHistory5||[];var evals=getLocalEvals();var ei=-1;for(var i=0;i<evals.length;i++){if(evals[i].id===imp.id){ei=i;break;}}if(ei>=0)evals[ei]=imp;else evals.push(imp);saveLocalEvals(evals);currentEval=JSON.parse(JSON.stringify(imp));step4Chat=currentEval.chatHistory4||[];step5Chat=currentEval.chatHistory5||[];weatherData=currentEval.weatherData||null;if(currentEval.status==='final')renderStep5();else if(currentEval.status==='deep_checklist')renderDeepChecklist();else if(currentEval.status==='ai_analyzed')renderStep4();else if(currentEval.status==='data_collected'){updateSteps(3);renderStep3Loading();}else renderStep1();toast('✅已导入');}
+    async function deleteAllCloud(){showConfirm('清空','清空所有云端记录？',async function(ok){if(ok){await saveChatJson([]);toast('已清空');loadCloudRecords();}});}
+    document.getElementById('btnDeleteAllCloud').addEventListener('click',deleteAllCloud);
+
+    function renderPOITable(data,mx){mx=mx||30;if(!data||!data.length)return'<div style="font-size:9px;padding:4px;">未搜索到</div>';var s=data.slice(0,mx);var h='<div class="poi-table-wrap"><table class="poi-table"><thead><tr><th>#</th><th>名称</th><th>距离</th></tr></thead><tbody>';for(var i=0;i<s.length;i++){var p=s[i];h+='<tr><td>'+(i+1)+'</td><td><strong>'+esc(p.name||'?')+'</strong></td><td class="poi-dist">'+fmtDist(p.distance)+'</td></tr>';}if(data.length>mx)h+='<tr><td colspan="3" style="text-align:center;">共'+data.length+'条</td></tr>';h+='</tbody></table></div>';return h;}
+    function renderCollapsible(title,content,defOpen){var id='sc_'+Math.random().toString(36).slice(2,8);return'<div class="section-toggle'+(defOpen?' expanded':'')+'" data-sid="'+id+'"><span class="arrow">▶</span> '+esc(title)+'</div><div class="section-content'+(defOpen?' show':'')+'" id="'+id+'">'+content+'</div>';}
+    function renderChat(){var arr=step5Chat;var h='<div class="chat-panel"><div class="chat-header-bar" data-cid="chat5">💬AI问答<span class="chat-arrow">▶</span></div><div class="chat-body" id="chat5"><div class="chat-messages" id="chat5_msgs">';for(var i=0;i<arr.length;i++)h+='<div class="chat-msg '+arr[i].role+'">'+esc(arr[i].content).replace(/\n/g,'<br>')+'</div>';if(!arr.length)h+='<div style="text-align:center;font-size:9px;padding:10px;">有疑问直接问AI</div>';h+='</div><div class="chat-input-row"><input id="chat5_inp" placeholder="问AI..."><button class="chat-send-btn" id="chat5_btn">➤</button></div></div></div>';return h;}
+    async function sendChat(){
+        var inp=document.getElementById('chat5_inp'),btn=document.getElementById('chat5_btn'),msgs=document.getElementById('chat5_msgs');
+        if(!inp||!btn||!msgs)return;var txt=inp.value.trim();if(!txt)return;
+        step5Chat.push({role:'user',content:txt});inp.value='';btn.disabled=true;renderChatMsgs();
+        var ctxStr='完整数据：'+JSON.stringify({ai:currentEval.aiAnalysis,deep:currentEval.deepChecklist,field:currentEval.fieldData,final:currentEval.finalReport});
+        var lid='ld_'+Date.now();msgs.insertAdjacentHTML('beforeend','<div class="chat-msg ai" id="'+lid+'">思考中...</div>');
+        try{var reply=await callDS([{role:'system',content:'选址专家。基于完整数据回答。'},{role:'user',content:ctxStr}].concat(step5Chat.slice(-6).map(function(m){return{role:m.role,content:m.content};})),0.7,1500);var le=document.getElementById(lid);if(le)le.remove();step5Chat.push({role:'assistant',content:reply});saveCurrent();renderChatMsgs();}catch(e){var le2=document.getElementById(lid);if(le2)le2.remove();step5Chat.push({role:'assistant',content:'失败：'+e.message});renderChatMsgs();}
+        btn.disabled=false;inp.focus();
+    }
+    function renderChatMsgs(){var msgs=document.getElementById('chat5_msgs');if(!msgs)return;msgs.innerHTML=step5Chat.map(function(m){return'<div class="chat-msg '+m.role+'">'+esc(m.content).replace(/\n/g,'<br>')+'</div>';}).join('')||'<div style="text-align:center;font-size:9px;padding:10px;">有疑问直接问AI</div>';msgs.scrollTop=msgs.scrollHeight;}
+
+    $m.addEventListener('click',function(e){
+        var st=e.target.closest('.section-toggle');if(st){var sc=document.getElementById(st.getAttribute('data-sid'));if(sc){st.classList.toggle('expanded');sc.classList.toggle('show');}return;}
+        var ch=e.target.closest('.chat-header-bar');if(ch){var cid=ch.getAttribute('data-cid'),b=document.getElementById(cid);if(b){ch.classList.toggle('expanded');b.classList.toggle('show');}return;}
+        var sb=e.target.closest('.chat-send-btn');if(sb&&sb.id==='chat5_btn'){sendChat();return;}
+        var radio=e.target.closest('.checklist-options input[type="radio"]');if(radio){var item=radio.closest('.checklist-item');if(item)item.classList.add('answered');return;}
+    });
+    $m.addEventListener('keydown',function(e){if(e.key==='Enter'){var inp=e.target;if(inp.id==='chat5_inp'){e.preventDefault();sendChat();}}});
+
+    function localEstimate(name){name=(name||'').toLowerCase();if(name.includes('别墅')||name.includes('山庄')||name.includes('豪庭'))return 60;if(name.includes('公寓')||name.includes('soho'))return 450;if(name.includes('大厦')||name.includes('大楼'))return 180;if(name.includes('城')||name.includes('国际')||name.includes('世纪'))return 1800;if(name.includes('花园')||name.includes('苑')||name.includes('庭'))return 400;if(name.includes('村')||name.includes('新村'))return 350;if(name.includes('邸')||name.includes('府')||name.includes('湾'))return 500;if(name.includes('园'))return 600;return 300;}
+    function getTimeFactor(){var h=new Date().getHours(),d=new Date().getDay(),we=(d===0||d===6);if(!we){if(h>=7&&h<=9)return{l:'早高峰',f:1.8};if(h>=11&&h<=13)return{l:'午高峰',f:2.0};if(h>=17&&h<=19)return{l:'晚高峰',f:1.9};if(h>=20&&h<=22)return{l:'晚间',f:1.2};if(h>=0&&h<=6)return{l:'深夜',f:0.1};return{l:'工作时段',f:0.8};}else{if(h>=10&&h<=14)return{l:'周末午间',f:2.2};if(h>=15&&h<=21)return{l:'周末晚间',f:2.5};if(h>=0&&h<=8)return{l:'周末清晨',f:0.3};return{l:'周末白天',f:1.5};}}
+
+    // ===== Step1 =====
+    function renderStep1(){
+        updateSteps(1);var hk=!!getAk();var addr='',ind='',rad=selectedRadius||1000;if(currentEval){addr=esc(currentEval.address||'');ind=esc(currentEval.industry||'');rad=currentEval.radius||1000;}var tpl=detectTpl(ind);if(tpl&&tpl.r&&!currentEval){rad=tpl.r;selectedRadius=rad;}
+        var h='<div class="card"><div class="card-title" style="font-size:16px;">🎯 输入选址信息</div>';
+        h+='<div class="form-group"><label class="form-label">📍 意向地址 <span class="form-sublabel">（越详细越好）</span></label>';
+        h+='<div class="input-with-btn"><input type="text" class="form-input" id="evalAddress" placeholder="例如：成都市锦江区春熙路" value="'+addr+'" style="font-size:14px;"><button class="btn-locate" id="btnLocate">📍 定位</button></div></div>';
+        h+='<div class="form-group"><label class="form-label">🏪 经营行业</label><input type="text" class="form-input" id="evalIndustry" placeholder="例如：奶茶店、火锅店" value="'+ind+'" style="font-size:14px;max-width:60%;">';
+        if(tpl)h+='<div style="display:flex;align-items:center;gap:4px;padding:8px 10px;background:var(--success-light);border-radius:6px;font-size:10px;color:var(--success);margin-top:6px;">✅ 已匹配行业模板 · 推荐半径<b>'+tpl.r+'m</b> · 关键指标：'+(tpl.m||[]).join('、')+'</div>';
+        h+='</div>';
+        h+='<div class="form-group"><label class="form-label">📏 搜索半径 <span class="form-sublabel">（<span class="custom-radius" id="customRadiusLink">点击自定义输入</span>）</span></label>';
+        h+='<div class="radius-selector" id="radiusSelector" style="gap:5px;">';
+        [500,1000,2000,3000,5000].forEach(function(v){h+='<div class="radius-opt'+(rad===v?' selected':'')+'" data-r="'+v+'">'+(v<1000?v+'m':(v/1000)+'km')+'</div>';});
+        h+='</div>';
+        h+='<div class="radius-tip">💡 半径越小数据越精准，建议500m-2km最佳，过大数据超出竞争范围反而影响分析。</div></div>';
+        h+='<div class="form-group"><label class="form-label">🌤️ 天气查询 <span class="form-sublabel">（可选）</span></label>';
+        h+='<div class="input-with-btn"><input type="text" class="form-input" id="weatherCity" placeholder="输入城市名，如：成都" style="max-width:160px;font-size:13px;"><button class="btn btn-sm btn-outline" id="btnWeather">查询天气</button></div><div id="weatherResult"></div></div>';
+        if(!hk){
+            h+='<div class="form-group"><label class="form-label">🔑 密钥配置</label><div style="font-size:10px;color:var(--text-secondary);cursor:pointer;text-decoration:underline;" id="keyTrigger">点击配置密钥</div></div>';
+        }else{
+            h+='<div style="font-size:10px;color:var(--success);margin-bottom:8px;">✅ 密钥已配置 <span class="key-link" id="keyTrigger">🔄重新配置</span></div>';
+        }
+        h+='<button class="btn btn-primary btn-block" id="btnStart"'+(hk?'':' disabled')+' style="padding:12px;font-size:14px;">🚀 开始采集数据</button></div>';
+        render(h);
+
+        document.getElementById('btnLocate').addEventListener('click',function(){if(!navigator.geolocation){toast('浏览器不支持定位');return;}var b=this;b.disabled=true;b.textContent='⏳定位中...';navigator.geolocation.getCurrentPosition(async function(p){try{var a=await amapRegeo(p.coords.longitude,p.coords.latitude);document.getElementById('evalAddress').value=a;toast('✅已定位');}catch(e){document.getElementById('evalAddress').value=p.coords.longitude+','+p.coords.latitude;}b.disabled=false;b.textContent='📍定位';},function(){toast('❌定位失败');b.disabled=false;b.textContent='📍定位';},{enableHighAccuracy:true,timeout:10000});});
+        document.getElementById('btnWeather').addEventListener('click',async function(){var c=document.getElementById('weatherCity').value.trim();if(!c){toast('请输入城市名');return;}var b=this;b.disabled=true;b.textContent='查询中...';try{var w=await amapWeather(c);weatherData=w;var t=w.casts[0];document.getElementById('weatherResult').innerHTML='<div class="weather-card"><div class="temp">'+t.daytemp+'°</div><div><div>'+esc(w.city)+' · '+esc(t.date)+'</div><div>☀️ '+esc(t.dayweather)+' | 🌙 '+esc(t.nightweather)+'</div><div>🌡 '+esc(t.nighttemp)+'° ~ '+esc(t.daytemp)+'° | 💧 '+esc(t.dayhumidity)+'%</div></div></div>';toast('✅天气已查询');}catch(e){document.getElementById('weatherResult').innerHTML='<div style="color:var(--danger);font-size:10px;">❌ '+esc(e.message)+'</div>';}b.disabled=false;b.textContent='查询天气';});
+        document.querySelectorAll('#radiusSelector .radius-opt').forEach(function(el){el.addEventListener('click',function(){document.querySelectorAll('#radiusSelector .radius-opt').forEach(function(a){a.classList.remove('selected');});this.classList.add('selected');selectedRadius=parseInt(this.getAttribute('data-r'));});});
+        document.getElementById('btnStart').addEventListener('click',startCollection);
+        document.getElementById('keyTrigger').addEventListener('click',showKeyModal);
+        document.getElementById('customRadiusLink').addEventListener('click',showCustomRadius);
+    }
+
+    // ===== Step2: 采集数据 =====
+    async function startCollection(){
+        var addr=document.getElementById('evalAddress').value.trim(),ind=document.getElementById('evalIndustry').value.trim();
+        if(!addr||!ind){toast('填完信息');return;}if(!getAk()){toast('请先配置密钥');return;}
+        currentEval=createEmpty();currentEval.id=genId();currentEval.address=addr;currentEval.industry=ind;currentEval.radius=selectedRadius;currentEval.createdAt=new Date().toISOString();currentEval.weatherData=weatherData;
+        step4Chat=[];step5Chat=[];updateSteps(2);
+        render('<div class="card"><div class="spinner-wrap"><div class="spinner"></div><span id="st">解析地址...</span></div><div id="lg" style="font-size:9px;margin-top:4px;"></div></div>');
+        var $lg=document.getElementById('lg'),$st=document.getElementById('st');function lg(m){$lg.innerHTML+='<div>'+m+'</div>';$st.textContent=m;}
+        try{
+            lg('📍解析坐标...');var coords=await amapGeocode(addr);currentEval.coordinates=[coords.lng,coords.lat];currentEval.rawData.fmtAddr=coords.fmt;currentEval.cityLevel=getCityLevel(coords.fmt);lg(' ✅'+coords.fmt+' | '+currentEval.cityLevel.level+'（系数'+currentEval.cityLevel.factor+'）');
+            var loc=coords.lng+','+coords.lat,rad=selectedRadius;
+            var tasks=[{k:'住宅小区',l:'🏠小区',kw:'住宅小区',types:'120300'},{k:'写字楼',l:'🏢写字楼',kw:'写字楼',types:'120200'},{k:'公司企业',l:'🏭公司',kw:'公司|企业',types:'170000'},{k:'学校',l:'🏫学校',kw:'',types:''},{k:'医院',l:'🏥医院',kw:'医院',types:'090100|090200'},{k:'商场',l:'🛍️商场',kw:'购物中心',types:'060100'},{k:'地铁站',l:'🚇地铁',kw:'地铁站',types:'150500'},{k:'公交站',l:'🚌公交',kw:'公交站',types:'150600'},{k:'停车场',l:'🅿️停车',kw:'停车场',types:'150900'},{k:'餐饮',l:'🍽️餐饮',kw:'餐饮',types:'050000'},{k:'竞品',l:'⚔️竞品',kw:ind,types:''}];
+            for(var t=0;t<tasks.length;t++){lg(tasks[t].l+'...');try{if(tasks[t].k==='学校'){var r=await searchSchools(loc,rad);currentEval.rawData[tasks[t].k]=r;lg(' →'+r.length+'个');}else{var r=await amapPOISearch(loc,tasks[t].kw,rad,tasks[t].types);currentEval.rawData[tasks[t].k]=r;lg(' →'+r.length+'个');}}catch(e){currentEval.rawData[tasks[t].k]=[];}await sleep(200);}
+            currentEval.status='data_collected';saveCurrent();updateSteps(3);
+            renderStep3Loading();
+        }catch(e){lg('❌'+e.message);}
+    }
+
+    // ===== Step3: 仅初步分析（不含清单）=====
+    function renderStep3Loading(){
+        render('<div class="card"><div class="spinner-wrap"><div class="spinner"></div><span>AI初步分析中（不含清单，更快）...</span></div></div>');
+        runStep3AI();
+    }
+
+    async function runStep3AI(){
+        var d=currentEval.rawData;function c(k){return(d[k]||[]).length;}
+        var communities=d['住宅小区']||[],localHouseholds=communities.reduce(function(s,c){return s+localEstimate(c.name);},0);
+        var cityFactor=currentEval.cityLevel?currentEval.cityLevel.factor:1.0;
+        var population=localHouseholds*2.8*cityFactor;
+        var rad=currentEval.radius;
+        var sum={地址:currentEval.address,行业:currentEval.industry,半径:currentEval.radius+'m',城市等级:currentEval.cityLevel?currentEval.cityLevel.level:'未知',城市系数:cityFactor,统计:{小区:c('住宅小区'),写字楼:c('写字楼'),公司:c('公司企业'),学校:c('学校'),医院:c('医院'),商场:c('商场'),地铁:c('地铁站'),公交:c('公交站'),停车:c('停车场'),餐饮:c('餐饮'),竞品:c('竞品')},人口估算:{估算人口:population.toFixed(0)+'人（已加权城市系数'+cityFactor+'）'}};
+        if(currentEval.weatherData)sum.天气=currentEval.weatherData;
+        try{var r1=await callDS([{role:'system',content:'只输出JSON'},{role:'user',content:'选址初步分析。只做四层分析和风险机会判断，不要生成实地清单。输出JSON：{"populationEstimate":"","crowdProfile":"","layer1_score":70,"layer1_analysis":"","layer2_score":70,"layer2_analysis":"","layer3_score":65,"layer3_analysis":"","layer4_score":60,"layer4_analysis":"","overall_score":68,"overall_summary":"","weatherNote":"","risks":[],"opportunities":[]}。数据：'+JSON.stringify(sum)}],0.4,8000);var m1=r1.match(/\{[\s\S]*\}/);if(m1){var a=JSON.parse(m1[0]);a._population=population;currentEval.aiAnalysis=a;}}catch(e){currentEval.aiAnalysis=sum;}
+        currentEval.status='ai_analyzed';saveCurrent();renderStep4();
+    }
+
+    // ===== Step4: 初步报告 + 单独生成清单入口 =====
+    function renderStep4(){
+        updateSteps(4);var a=currentEval.aiAnalysis||{},d=currentEval.rawData;var loc=currentEval.coordinates?currentEval.coordinates.join(','):'';
+        var cats=[{k:'竞品',t:'⚔️竞品',def:true},{k:'住宅小区',t:'🏠小区',def:true},{k:'写字楼',t:'🏢写字楼',def:true},{k:'学校',t:'🏫学校',def:false},{k:'餐饮',t:'🍽️餐饮',def:false},{k:'商场',t:'🛍️商场',def:false},{k:'地铁站',t:'🚇地铁',def:false},{k:'公司企业',t:'🏭公司',def:false},{k:'停车场',t:'🅿️停车',def:false},{k:'医院',t:'🏥医院',def:false}];
+        var tables='';for(var c=0;c<cats.length;c++){var cd=d[cats[c].k]||[];if(cd.length>0)tables+=renderCollapsible(cats[c].t+'('+cd.length+')',renderPOITable(cd,30),cats[c].def);}
+        var allActivePOIs=[];
+        ['餐饮','商场','写字楼','公司企业'].forEach(function(k){var items=d[k]||[];items.forEach(function(p){p._category=k;allActivePOIs.push(p);});});
+        var coreCount=allActivePOIs.filter(function(p){return parseInt(p.distance||9999)<=50;}).length;
+        var midCount=allActivePOIs.filter(function(p){var dist=parseInt(p.distance||9999);return dist>50&&dist<=800;}).length;
+        var farCount=allActivePOIs.filter(function(p){var dist=parseInt(p.distance||9999);return dist>800;}).length;
+        var coreDensityScore=Math.min(100,coreCount*3);
+        var midDensityScore=Math.min(100,midCount*1.5);
+        var communities=d['住宅小区']||[];
+        var cityFactor=currentEval.cityLevel?currentEval.cityLevel.factor:1.0;
+        var pop=(communities.reduce(function(s,c){return s+localEstimate(c.name);},0)*2.8*cityFactor);
+        var popScore=Math.min(100,Math.round(pop/100));
+        var tm=getTimeFactor();
+        var timeScore=Math.round(tm.f*50);
+        var finalScore=Math.round(coreDensityScore*0.5+midDensityScore*0.2+timeScore*0.15+popScore*0.15);
+        finalScore=Math.min(100,Math.max(0,finalScore));
+        var level=finalScore>=80?'🔥高人流':finalScore>=60?'👍中等':finalScore>=40?'👌一般':'❄️低人流';
+        var barColor=finalScore>=80?'#059669':finalScore>=50?'#d97706':'#dc2626';
+
+        var h='<div class="summary-card"><div class="summary-label">📊初步评估（'+currentEval.radius+'m）</div><div class="summary-score">'+(a.overall_score||'--')+'</div><div style="font-size:10px;">'+esc(a.overall_summary||'')+'</div><div class="summary-grid"><div class="summary-item"><div class="summary-item-label">整体客群</div><div class="summary-item-value">'+(a.layer1_score||'--')+'分</div></div><div class="summary-item"><div class="summary-item-label">有效客群</div><div class="summary-item-value">'+(a.layer2_score||'--')+'分</div></div><div class="summary-item"><div class="summary-item-label">地形垄断</div><div class="summary-item-value">'+(a.layer3_score||'--')+'分</div></div><div class="summary-item"><div class="summary-item-label">竞争对手</div><div class="summary-item-value">'+(a.layer4_score||'--')+'分</div></div></div></div>';
+        if(a.weatherNote)h+='<div class="card"><div class="card-title">🌤️天气分析</div><div class="ai-block success">'+esc(a.weatherNote)+'</div></div>';
+        h+='<div class="card"><div class="card-title">👥区域人流评估（基于50m核心区）</div>';
+        h+='<div style="font-size:9px;color:var(--text-muted);margin-bottom:4px;">城市等级：'+(currentEval.cityLevel?currentEval.cityLevel.level:'未知')+'（人口系数×'+cityFactor+'）| 当前时段：'+tm.l+'（×'+tm.f+'）</div>';
+        h+='<div class="flow-meter"><span style="font-weight:700;">综合</span><div class="flow-bar-outer"><div class="flow-bar-inner" style="width:'+finalScore+'%;background:'+barColor+';"></div></div><span class="flow-label">'+finalScore+'</span></div>';
+        h+='<div class="density-grid"><div class="density-item"><div class="val">'+coreCount+'</div><div class="lbl">📍核心区<50m('+coreDensityScore+'分)</div></div><div class="density-item"><div class="val">'+midCount+'</div><div class="lbl">📍中间区50-800m('+midDensityScore+'分)</div></div><div class="density-item"><div class="val">'+(pop/10000).toFixed(1)+'万</div><div class="lbl">👥估算人口('+popScore+'分)</div></div><div class="density-item"><div class="val">'+tm.l+'</div><div class="lbl">🕐时段系数('+timeScore+'分)</div></div></div><div style="text-align:center;font-size:15px;font-weight:700;color:'+barColor+';">'+level+'</div>';
+        h+='<div style="font-size:8px;color:var(--text-muted);margin-top:4px;">💡评分公式：核心区密度×0.5 + 中间区密度×0.2 + 时段系数×0.15 + 人口分×0.15</div></div>';
+        h+='<div class="card"><div class="card-title"><span class="layer-badge badge-layer1">一</span>整体客户</div><div class="ai-block">'+esc(a.layer1_analysis||'')+'</div><div style="font-size:9px;">👥'+esc(a.crowdProfile||'')+' 📊'+esc(a.populationEstimate||'')+'</div></div>';
+        h+='<div class="card"><div class="card-title"><span class="layer-badge badge-layer2">二</span>有效客户</div><div class="ai-block">'+esc(a.layer2_analysis||'')+'</div></div>';
+        h+='<div class="card"><div class="card-title"><span class="layer-badge badge-layer3">三</span>地形垄断</div><div class="ai-block">'+esc(a.layer3_analysis||'')+'</div></div>';
+        h+='<div class="card"><div class="card-title"><span class="layer-badge badge-layer4">四</span>竞争对手</div><div class="ai-block">'+esc(a.layer4_analysis||'')+'</div></div>';
+        h+='<div class="card"><div class="card-title">⚠️风险&💡机会</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;"><div style="background:var(--danger-light);padding:8px;border-radius:6px;"><strong>⚠️风险</strong>'+(a.risks||[]).map(function(r){return'<div style="font-size:9px;">•'+esc(r)+'</div>';}).join('')+'</div><div style="background:var(--success-light);padding:8px;border-radius:6px;"><strong>💡机会</strong>'+(a.opportunities||[]).map(function(o){return'<div style="font-size:9px;">•'+esc(o)+'</div>';}).join('')+'</div></div></div>';
+        h+='<div class="card"><div class="card-title">📊POI原始数据</div>'+tables+'</div>';
+        if(loc)h+='<div class="card"><div class="card-title">🗺️POI分布图</div><div id="mapContainer"></div></div>';
+
+        // 清单入口
+        h+='<div class="checklist-entry-card"><div class="title">📋 AI深度洞察清单</div><div class="sub">点击下方按钮，AI将基于初步报告和高德原始数据，单独生成深度实地考察选择题</div><button class="btn-checklist" id="btnGoChecklist">📋 生成深度洞察清单 →</button></div>';
+        h+='<div style="display:flex;gap:6px;margin-bottom:40px;"><button class="btn btn-outline btn-sm" id="btnSave4">💾暂存</button><button class="btn btn-ghost btn-sm" id="btnNew4">🆕新建</button></div>';
+        render(h);
+        document.getElementById('btnGoChecklist').addEventListener('click',function(){currentEval.status='ai_analyzed';saveCurrent();renderDeepChecklistLoading();});
+        document.getElementById('btnSave4').addEventListener('click',function(){saveCurrent();toast('已保存');});
+        document.getElementById('btnNew4').addEventListener('click',startNew);
+        saveToCloud();
+        if(loc)setTimeout(function(){try{loadMap(loc,d);}catch(e){}},500);
+    }
+
+    // ===== 第四步单独生成深度清单 =====
+    function renderDeepChecklistLoading(){
+        var h='<div class="card"><div class="spinner-wrap"><div class="spinner"></div><span>AI深度分析中，生成实地洞察清单...</span></div>';
+        h+='<div class="wait-tip">⏳ 此过程可能需要<b>3-5分钟</b>，AI正在基于高德数据深度挖掘考察题目，请耐心等待，<b>不要离开页面</b>。</div></div>';
+        render(h);
+        generateDeepChecklist();
+    }
+
+    async function generateDeepChecklist(){
+        var d=currentEval.rawData;function c(k){return(d[k]||[]).length;}
+        var communities=d['住宅小区']||[],localHouseholds=communities.reduce(function(s,c){return s+localEstimate(c.name);},0);
+        var cityFactor=currentEval.cityLevel?currentEval.cityLevel.factor:1.0;
+        var population=localHouseholds*2.8*cityFactor;
+        var rad=currentEval.radius;
+        var radiusContext=rad<=500?'步行可达核心范围':rad<=1000?'骑行短途范围':rad<=3000?'车行范围':'大区域范围';
+        var sum={地址:currentEval.address,行业:currentEval.industry,半径:currentEval.radius+'m',搜索范围说明:radiusContext,城市等级:currentEval.cityLevel?currentEval.cityLevel.level:'未知',城市系数:cityFactor,统计:{小区:c('住宅小区'),写字楼:c('写字楼'),公司:c('公司企业'),学校:c('学校'),医院:c('医院'),商场:c('商场'),地铁:c('地铁站'),公交:c('公交站'),停车:c('停车场'),餐饮:c('餐饮'),竞品:c('竞品')},人口估算:{估算人口:population.toFixed(0)+'人'},初步分析:currentEval.aiAnalysis};
+        if(currentEval.weatherData)sum.天气=currentEval.weatherData;
+
+        var checklistPrompt='你是资深商业选址顾问。\n\n高德POI数据（真实数据）：'+JSON.stringify(sum)+'\n\n请生成18-25个实地考察选择题。要求：\n1. 不要问"数据是否真实"\n2. 深度挖掘：入住率、空置率、竞品实际经营状况、人流走向\n3. 加入风险识别数据题\n4. 加入机会识别数据题\n5. 每个选项要有信息量\n6. 结合搜索范围和城市等级解读\n7. 输出JSON数组：[{"id":"q1","category":"深层洞察/人口真相/竞品实况/风险识别/机会识别/环境信号/行业定制","question":"","options":["A.xxx","B.xxx","C.xxx","D.xxx"],"aiNote":"AI信号分析"}]';
+        try{var r2=await callDS([{role:'system',content:'只输出JSON数组'},{role:'user',content:checklistPrompt}],0.5,8000);var m2=r2.match(/\[[\s\S]*\]/);if(m2){var deepList=JSON.parse(m2[0]);var tpl=detectTpl(currentEval.industry);if(tpl&&tpl.ex){tpl.ex.forEach(function(e){deepList.push({id:e.id,category:'行业定制',question:e.t,options:e.o,aiNote:'行业模板推荐考察项'});});}currentEval.deepChecklist=deepList;}}catch(e){currentEval.deepChecklist=[];}
+        currentEval.status='deep_checklist';saveCurrent();renderDeepChecklist();
+    }
+
+    function renderDeepChecklist(){
+        updateSteps(4);var cl=currentEval.deepChecklist||[],fd=currentEval.fieldData||{};
+        var categories=['深层洞察','人口真相','竞品实况','风险识别','机会识别','环境信号','行业定制'];
+        var h='<div class="card"><div class="card-title">📋 AI深度洞察清单</div>';
+        h+='<div style="font-size:10px;color:var(--text-muted);margin-bottom:10px;">AI基于初步报告和高德原始数据单独生成'+(cl.length)+'道选择题</div>';
+        categories.forEach(function(cat){
+            var items=cl.filter(function(q){return q.category===cat;});
+            if(items.length===0)return;
+            h+='<div style="margin-bottom:12px;"><div style="font-weight:700;font-size:12px;margin-bottom:5px;color:var(--primary);">━━━ '+esc(cat)+'（'+items.length+'题）━━━</div>';
+            items.forEach(function(q,idx){
+                var sel=fd[q.id]||'',done=sel!=='';
+                h+='<div class="checklist-item'+(done?' answered':'')+'"><div class="checklist-q">'+(idx+1)+'. '+esc(q.question)+'</div>';
+                if(q.aiNote)h+='<div class="checklist-note">💡 AI分析: '+esc(q.aiNote)+'</div>';
+                h+='<div class="checklist-options">';
+                (q.options||[]).forEach(function(opt){h+='<label><input type="radio" name="'+q.id+'" value="'+esc(opt)+'"'+(sel===opt?' checked':'')+'> '+esc(opt)+'</label>';});
+                h+='</div></div>';
+            });h+='</div>';
+        });
+        h+='<div style="display:flex;gap:6px;margin-bottom:40px;"><button class="btn btn-primary" id="btnSubmitCL" style="flex:1;">✅ 提交→AI深度挖掘</button><button class="btn btn-outline btn-sm" id="btnSaveCL">💾暂存</button><button class="btn btn-outline btn-sm" id="btnBackCL">🔙返回报告</button></div></div>';
+        render(h);
+        document.getElementById('btnSubmitCL').addEventListener('click',function(){var radios=document.querySelectorAll('.checklist-options input[type="radio"]:checked');var data={};radios.forEach(function(r){data[r.name]=r.value;});currentEval.fieldData=data;saveCurrent();renderStep5();});
+        document.getElementById('btnSaveCL').addEventListener('click',function(){var radios=document.querySelectorAll('.checklist-options input[type="radio"]:checked');var data={};radios.forEach(function(r){data[r.name]=r.value;});currentEval.fieldData=data;saveCurrent();toast('已保存');});
+        document.getElementById('btnBackCL').addEventListener('click',function(){renderStep4();});
+    }
+
+    // ===== 地图 =====
+    async function loadMap(loc,d){
+        var k=getAk();if(!k)return;
+        try{
+            if(!window.AMap){var script=document.createElement('script');script.src='https://webapi.amap.com/maps?v=2.0&key='+encodeURIComponent(k);document.head.appendChild(script);await new Promise(function(r,reject){script.onload=r;script.onerror=reject;setTimeout(function(){reject(new Error('超时'));},8000);});}
+            if(mapObj){mapObj.destroy();}
+            var l=loc.split(',');mapObj=new AMap.Map('mapContainer',{center:[parseFloat(l[0]),parseFloat(l[1])],zoom:15,touchZoom:true,dragEnable:true});
+            mapObj.add(new AMap.Marker({position:[parseFloat(l[0]),parseFloat(l[1])],icon:new AMap.Icon({size:new AMap.Size(36,36),image:'https://webapi.amap.com/theme/v1.3/markers/n/mark_r.png',imageSize:new AMap.Size(36,36)}),zIndex:300,label:{content:'📍选址',offset:new AMap.Pixel(0,-28)}}));
+            var allPois=[],types=[{k:'竞品',c:'#FF4444',label:'竞品'},{k:'住宅小区',c:'#44CC44',label:'小区'},{k:'写字楼',c:'#4488FF',label:'写字楼'},{k:'学校',c:'#FF8800',label:'学校'},{k:'地铁站',c:'#FF44FF',label:'地铁'},{k:'公司企业',c:'#AA66FF',label:'公司'}];
+            types.forEach(function(tp){var items=d[tp.k]||[];items.slice(0,25).forEach(function(p){var pl=p.location?p.location.split(','):null;if(pl)allPois.push({lng:parseFloat(pl[0]),lat:parseFloat(pl[1]),name:p.name,color:tp.c,label:tp.label,distance:parseInt(p.distance)||9999});});});
+            var maxM=Math.min(allPois.length,60),count=0;
+            for(var j=0;j<maxM;j++){var p=allPois[j],sz=p.distance<=300?16:(p.distance<=700?13:10);var canvas=document.createElement('canvas');canvas.width=sz;canvas.height=sz;var ctx=canvas.getContext('2d');ctx.beginPath();ctx.arc(sz/2,sz/2,sz/2-1,0,2*Math.PI);ctx.fillStyle=p.color;ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();try{var mk=new AMap.Marker({position:[p.lng,p.lat],title:p.label+':'+p.name+'('+p.distance+'m)',icon:new AMap.Icon({size:new AMap.Size(sz,sz),image:canvas.toDataURL(),imageSize:new AMap.Size(sz,sz)}),offset:new AMap.Pixel(-sz/2,-sz/2),zIndex:100});mk.setMap(mapObj);count++;}catch(e){}}
+            var legend='';var ltypes=[{k:'竞品',c:'#FF4444',label:'竞品'},{k:'住宅小区',c:'#44CC44',label:'小区'},{k:'写字楼',c:'#4488FF',label:'写字楼'},{k:'学校',c:'#FF8800',label:'学校'},{k:'地铁站',c:'#FF44FF',label:'地铁'},{k:'公司企业',c:'#AA66FF',label:'公司'}];
+            ltypes.forEach(function(tp){var cnt=(d[tp.k]||[]).length;if(cnt>0)legend+='<span><span class="ldot" style="background:'+tp.c+';"></span>'+tp.label+'('+cnt+')</span>';});
+            var overlay=document.createElement('div');overlay.className='map-legend-overlay';overlay.innerHTML=legend+'<span style="font-size:8px;opacity:0.7;">共'+count+'个</span>';document.getElementById('mapContainer').appendChild(overlay);
+        }catch(e){console.log('地图失败:',e.message);}
+    }
+
+    function addToCompare(id){var evals=getLocalEvals(),f=null;for(var i=0;i<evals.length;i++){if(evals[i].id===id){f=evals[i];break;}}if(!f){toast('未找到');return;}if(compareList.some(function(e){return e.id===id;})){toast('已在列表');return;}compareList.push(f);if(compareList.length>3)compareList.shift();toast('已加入('+compareList.length+'/3)');renderCompare();}
+    function renderCompare(){var ex=document.getElementById('comparePanel');if(ex)ex.remove();if(compareList.length===0)return;var h='<div class="card" id="comparePanel"><div class="card-title">📊对比('+compareList.length+'/3)<button class="btn btn-ghost btn-xs" id="btnClearCp">清空</button></div><table class="mini-table"><thead><tr><th>地址</th><th>行业</th><th>总评</th><th>客群</th><th>竞品</th></tr></thead><tbody>';compareList.forEach(function(e){h+='<tr><td>'+esc((e.address||'').slice(0,10))+'</td><td>'+esc(e.industry||'')+'</td><td>'+(e.finalReport?e.finalReport.finalScore:(e.aiAnalysis?e.aiAnalysis.overall_score:'--'))+'</td><td>'+(e.aiAnalysis?e.aiAnalysis.layer1_score:'--')+'</td><td>'+(e.aiAnalysis?e.aiAnalysis.layer4_score:'--')+'</td></tr>';});h+='</tbody></table></div>';$m.insertAdjacentHTML('afterbegin',h);document.getElementById('btnClearCp').addEventListener('click',function(){compareList=[];var el=document.getElementById('comparePanel');if(el)el.remove();});}
+
+    // ===== Step5: 深度数据挖掘 =====
+    async function renderStep5(){
+        updateSteps(5);var fd=currentEval.fieldData||{},cl=currentEval.deepChecklist||[];
+        if(Object.keys(fd).length===0){toast('请先完成清单');renderDeepChecklist();return;}
+        render('<div class="card"><div class="spinner-wrap"><div class="spinner"></div><span>AI深度数据挖掘...</span></div></div>');
+        var userAnswers=cl.map(function(q){return{题号:q.id,问题:q.question,用户选择:fd[q.id]||'未答',AI疑点:q.aiNote||''};});
+        var p='根据用户实地考察回答做深度数据挖掘。\n初始数据：'+JSON.stringify(currentEval.aiAnalysis)+'\n用户实地考察答案：'+JSON.stringify(userAnswers)+'\n\n要求：\n1.判断哪些数据信号得到了实地验证、哪些被推翻\n2.重新评估四层分析（每层0-100分+调整理由）\n3.给出最终评分和判定\n4.列出后续待办\n\n输出JSON：{"finalScore":70,"verdict":"可考虑","verifiedInsights":["实地验证的洞察"],"overturnedAssumptions":["被推翻的假设"],"adjustedScores":{"layer1":75,"layer2":60,"layer3":70,"layer4":55},"adjustReasons":[],"keyFindings":[],"actionItems":[],"finalSummary":""}';
+        try{var r=await callDS([{role:'system',content:'只输出JSON'},{role:'user',content:p}],0.4,6000);var m=r.match(/\{[\s\S]*\}/);if(!m)throw new Error('JSON失败');currentEval.finalReport=JSON.parse(m[0]);currentEval.status='final';saveCurrent();renderStep5Result();}catch(e){render('<div class="card"><p>❌'+esc(e.message)+'</p><button class="btn btn-primary" id="rf">重试</button></div>');document.getElementById('rf').addEventListener('click',renderStep5);}}
+
+    function renderStep5Result(){
+        var fr=currentEval.finalReport||{};
+        var vc='var(--success)',vi='✅';if(fr.verdict==='谨慎'){vc='var(--warning)';vi='⚠️';}if(fr.verdict==='建议放弃'){vc='var(--danger)';vi='❌';}
+        var h='<div class="summary-card" style="text-align:center;"><div class="summary-label">📋最终结论</div><div class="summary-score">'+(fr.finalScore||'--')+'分</div><div style="font-size:16px;font-weight:700;color:'+vc+';">'+vi+' '+esc(fr.verdict||'--')+'</div><div style="font-size:10px;">'+esc(fr.finalSummary||'')+'</div></div>';
+        if(fr.verifiedInsights&&fr.verifiedInsights.length){h+='<div class="card"><div class="card-title">✅实地验证的洞察</div>'+(fr.verifiedInsights||[]).map(function(v){return'<div style="font-size:10px;padding:3px 0;">•'+esc(v)+'</div>';}).join('')+'</div>';}
+        if(fr.overturnedAssumptions&&fr.overturnedAssumptions.length){h+='<div class="card"><div class="card-title">⚠️被推翻的假设</div>'+(fr.overturnedAssumptions||[]).map(function(n){return'<div style="font-size:10px;padding:3px 0;">•'+esc(n)+'</div>';}).join('')+'</div>';}
+        if(fr.adjustedScores){h+='<div class="card"><div class="card-title">🔄修正后四层评分</div><div class="summary-grid"><div class="summary-item"><div class="summary-item-label">客群</div><div class="summary-item-value">'+(fr.adjustedScores.layer1||'--')+'</div></div><div class="summary-item"><div class="summary-item-label">有效</div><div class="summary-item-value">'+(fr.adjustedScores.layer2||'--')+'</div></div><div class="summary-item"><div class="summary-item-label">地形</div><div class="summary-item-value">'+(fr.adjustedScores.layer3||'--')+'</div></div><div class="summary-item"><div class="summary-item-label">竞品</div><div class="summary-item-value">'+(fr.adjustedScores.layer4||'--')+'</div></div></div>'+(fr.adjustReasons||[]).map(function(r){return'<div style="font-size:9px;">•'+esc(r)+'</div>';}).join('')+'</div>';}
+        if(fr.keyFindings&&fr.keyFindings.length)h+='<div class="card"><div class="card-title">🔍关键发现</div>'+(fr.keyFindings||[]).map(function(k){return'<div style="font-size:10px;padding:3px 0;">•'+esc(k)+'</div>';}).join('')+'</div>';
+        if(fr.actionItems&&fr.actionItems.length)h+='<div class="card"><div class="card-title">📝后续待办</div>'+fr.actionItems.map(function(a){return'<div style="font-size:10px;padding:3px 0;"><input type="checkbox">'+esc(a)+'</div>';}).join('')+'</div>';
+        h+='<div class="card"><div class="card-title">💬AI问答</div>'+renderChat()+'</div>';
+        h+='<div style="display:flex;gap:6px;margin-bottom:40px;"><button class="btn btn-outline" id="bb" style="flex:1;">🔙返回报告</button><button class="btn btn-outline btn-sm" id="bsv2">💾暂存</button><button class="btn btn-ghost btn-sm" id="bn2">🆕新建</button></div>';
+        render(h);
+        document.getElementById('bb').addEventListener('click',function(){renderStep4();});
+        document.getElementById('bsv2').addEventListener('click',function(){saveCurrent();toast('已保存');});
+        document.getElementById('bn2').addEventListener('click',startNew);
+        if(step5Chat.length>0)document.getElementById('chat5').classList.add('show');
+        toast('✅深度分析完成');saveToCloud();
+    }
+
+    // ===== 历史（可返回）=====
+    function showHistory(){
+        updateSteps(0);
+        var evals=getLocalEvals();
+        if(!evals.length){
+            var emptyH='<div class="card"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;"><button class="btn btn-outline btn-sm" id="btnBackFromHistory">🔙 返回</button></div><div class="empty-state"><div>📂暂无记录</div><button class="btn btn-primary btn-sm" id="be">🆕 新建</button></div></div>';
+            render(emptyH);
+            document.getElementById('btnBackFromHistory').addEventListener('click',function(){refreshView();});
+            var beBtn=document.getElementById('be');
+            if(beBtn)beBtn.addEventListener('click',function(){startNew();});
+            return;
+        }
+        var h='<div class="card" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;"><button class="btn btn-outline btn-sm" id="btnBackFromHistory">🔙 返回</button><span style="font-weight:700;">📂 本地历史 ('+evals.length+')</span><button class="btn btn-ghost btn-xs" id="bc">🗑 清空</button></div>';
+        evals.slice().reverse().forEach(function(e){
+            var sc=e.finalReport?e.finalReport.finalScore:(e.aiAnalysis?e.aiAnalysis.overall_score:'--');
+            h+='<div class="history-item" data-id="'+esc(e.id)+'"><div><strong>'+esc((e.address||'').slice(0,18))+'</strong><div style="font-size:9px;">'+esc(e.industry||'')+'·'+(e.status==='final'?'✅':'⏳')+'</div></div><div><strong>'+sc+'</strong><button class="btn btn-ghost btn-xs bd" data-id="'+esc(e.id)+'">🗑</button></div></div>';
+        });
+        render(h);
+        document.getElementById('btnBackFromHistory').addEventListener('click',function(){refreshView();});
+        document.getElementById('bc').addEventListener('click',function(){
+            showConfirm('清空','清空本地记录？',function(ok){if(ok){localStorage.removeItem('_ev24');toast('已清空');showHistory();}});
+        });
+        document.querySelectorAll('.history-item').forEach(function(el){
+            el.addEventListener('click',function(){loadEval(this.getAttribute('data-id'));});
+        });
+        document.querySelectorAll('.bd').forEach(function(el){
+            el.addEventListener('click',function(e){e.stopPropagation();var id=this.getAttribute('data-id');
+                showConfirm('删除','确定删除？',function(ok){if(ok)deleteEval(id);});
+            });
+        });
+    }
+    function loadEval(id){
+        var evals=getLocalEvals(),f=null;
+        for(var i=0;i<evals.length;i++){if(evals[i].id===id){f=evals[i];break;}}
+        if(!f){toast('未找到');return;}
+        currentEval=JSON.parse(JSON.stringify(f));
+        step4Chat=currentEval.chatHistory4||[];
+        step5Chat=currentEval.chatHistory5||[];
+        weatherData=currentEval.weatherData||null;
+        if(currentEval.status==='final')renderStep5();
+        else if(currentEval.status==='deep_checklist')renderDeepChecklist();
+        else if(currentEval.status==='ai_analyzed')renderStep4();
+        else if(currentEval.status==='data_collected'){updateSteps(3);renderStep3Loading();}
+        else renderStep1();
+        toast('已加载');
+    }
+    function deleteEval(id){
+        saveLocalEvals(getLocalEvals().filter(function(e){return e.id!==id;}));
+        toast('已删除');
+        showHistory();
+    }
+    function startNew(){
+        currentEval=null;step4Chat=[];step5Chat=[];weatherData=null;compareList=[];
+        if(mapObj){mapObj.destroy();mapObj=null;}
+        selectedRadius=1000;renderStep1();
+    }
+
+    return{
+        showHistory:showHistory,openQueryPanel:openQueryPanel,closeQueryPanel:closeQueryPanel,startNew:startNew,showConfig:showKeyModal,
+        init:function(){selectedRadius=1000;renderStep1();console.log('✅ V24 就绪 | 默认1km | 50m核心区 | 可返回历史 | 清单等待提示');}
+    };
+})();
+App.init();
+</script>
+</body>
+</html>
