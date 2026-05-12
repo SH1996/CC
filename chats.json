@@ -399,11 +399,11 @@
   },
   {
     "id": "e_1778554304405_h3az5e",
-    "date": "2026-05-12T02:52:22.217Z",
+    "date": "2026-05-12T02:54:20.432Z",
     "address": "四川省绵阳市梓潼县长卿镇文昌大道南段",
     "industry": "包子铺",
     "radius": 1000,
-    "status": "ai_analyzed",
+    "status": "deep_checklist",
     "aiAnalysis": {
       "populationEstimate": "6160人（已加权城市系数0.4）",
       "crowdProfile": "以居住人群、学生及附近公司员工为主，年龄分布偏年轻及中年，消费实惠导向",
@@ -434,7 +434,7 @@
       ],
       "_population": 6160
     },
-    "deepChecklist": null,
+    "deepChecklist": [],
     "fieldData": {},
     "finalReport": null,
     "chatHistory4": [],
